@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -13,12 +14,14 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,20 +34,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private LinearLayout searchBar,mainLayout,header;
+    //khai báo biến
+    private LinearLayout searchBar,header,body,footer;
+    private NestedScrollView mainLayout;
     //private EditText searchInput;
     private ImageButton searchButton,btnChange,logoQQ,btnPopup;
     private ScrollView scroll;
     private boolean isWhite = false;
 
+    private int maxPages;
+    private int displayedStartPage = 1;
+    private TextView previousPageNumber,tv4;
     private Button btnPrev;
     private Button btnNext;
-    private List<List<Comic>> pageDataList = new ArrayList<>();
-    private List<Comic> pageComic;
+    private LinearLayout pageNumbersLayout;
+    private List<List<Comic>> pageDataList = new ArrayList<>();// chứa các mảng danh sách truện .
+    private List<Comic> pageComic;//mảng chưa danh sách truyện
     private int currentPage = 1;
     private ComicAdapter adapter;
     private int pageSize = 20;
     private RecyclerView ListComic;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     });
 
     declareVal();
-    createSampleData(100);
+    createSampleData(200);
     searchButton.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -118,23 +130,10 @@ public class MainActivity extends AppCompatActivity {
     ListComic.setLayoutManager(gridLayoutManager);
     ListComic.setAdapter(adapter);
 
+    createPageNumbers();
+    btnPrev.setOnClickListener(view -> handlePrevButton());
+    btnNext.setOnClickListener(view -> handleNextButton());
 
-        // Xử lý chuyển trang (tương tự như ví dụ trước)
-    btnPrev.setOnClickListener(view -> {
-        if (currentPage > 1) {
-            currentPage--;
-            adapter.updateData(pageDataList.get(currentPage - 1));
-            adapter.notifyDataSetChanged();
-        }
-    });
-
-    btnNext.setOnClickListener(view -> {
-        if (currentPage < pageDataList.size()) {
-            currentPage++;
-            adapter.updateData(pageDataList.get(currentPage - 1));
-            adapter.notifyDataSetChanged();
-        }
-    });
     }
     private void colorUiChange(boolean isWhite) {
         if (isWhite) {
@@ -145,7 +144,10 @@ public class MainActivity extends AppCompatActivity {
             btnChange.setBackground(null);
             searchButton.setBackground(null);
             logoQQ.setImageResource(R.mipmap.logoday);
-
+            ListComic.setBackgroundColor(Color.WHITE);
+            tv4.setTextColor(Color.BLACK);
+            body.setBackgroundColor(Color.WHITE);
+            footer.setBackgroundColor(Color.WHITE);
         } else {
             mainLayout.setBackgroundColor(Color.BLACK);
             logoQQ.setBackgroundColor(Color.BLACK);
@@ -154,6 +156,10 @@ public class MainActivity extends AppCompatActivity {
             searchButton.setBackground(null);
             btnChange.setBackground(null);
             logoQQ.setImageResource(R.mipmap.logonight);
+            ListComic.setBackgroundColor(Color.BLACK);
+            tv4.setTextColor(Color.WHITE);
+            body.setBackgroundColor(Color.BLACK);
+            footer.setBackgroundColor(Color.BLACK);
         }
     }
 
@@ -163,16 +169,21 @@ public class MainActivity extends AppCompatActivity {
         searchButton = (ImageButton) findViewById(R.id.search_button);
         btnChange = (ImageButton) findViewById(R.id.btnChange);
         logoQQ = (ImageButton) findViewById(R.id.logoQQ);
-        mainLayout = (LinearLayout) findViewById(R.id.main);
+        mainLayout = (NestedScrollView) findViewById(R.id.main);
         header = (LinearLayout) findViewById(R.id.header);
         btnPopup = (ImageButton) findViewById(R.id.btnPopup);
         btnPrev = (Button) findViewById(R.id.btnPrev);
         btnNext = (Button) findViewById(R.id.btnNext);
         ListComic = (RecyclerView) findViewById(R.id.ListComic);
+        pageNumbersLayout = (LinearLayout)  findViewById(R.id.pageNumbersLayout);
+        tv4 = (TextView) findViewById(R.id.textView4);
+        body = (LinearLayout) findViewById(R.id.body);
+        footer = (LinearLayout) findViewById(R.id.footer);
     }
 
     // Hàm tạo dữ liệu mẫu
     private void createSampleData(int numItems) {
+        //sau này sửa lại lay' data tu` database
         List<Comic> fullDataList = new ArrayList<>();
         for (int i = 1; i <= numItems; i++) {
             fullDataList.add(new Comic("Comic " + i, 0));
@@ -188,4 +199,71 @@ public class MainActivity extends AppCompatActivity {
             startIndex += pageSize;
         }
     }
+
+    private void createPageNumbers() {
+        pageNumbersLayout.removeAllViews(); // Xóa tất cả các TextView cũ
+
+        maxPages = pageDataList.size(); // Tổng số trang
+        // Hiển thị tối đa 5 trang: Ví dụ từ trang 1 đến trang 5 hoặc trang hiện tại
+        int startPage = Math.max(1, currentPage - 2); // Hiển thị từ trang hiện tại - 2
+        int endPage = Math.min(startPage + 4, maxPages); // Hiển thị tối đa 5 trang (nếu còn đủ trang)
+
+        for (int i = startPage; i <= endPage; i++) {
+            TextView pageNumber = (TextView) LayoutInflater.from(this)
+                    .inflate(R.layout.page_numbers_layout, pageNumbersLayout, false);
+            pageNumber.setText(String.valueOf(i));
+            pageNumber.setId(i);
+
+            int originalTextColor = pageNumber.getCurrentTextColor();
+            pageNumber.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (previousPageNumber != null) {
+                        previousPageNumber.setTextColor(originalTextColor); // Đổi lại màu trang trước đó
+                    }
+
+                    pageNumber.setTextColor(Color.RED); // Đổi màu trang hiện tại
+                    currentPage = v.getId(); // Lấy ID của TextView đã click (số trang)
+                    adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu
+                    previousPageNumber = pageNumber;
+                    mainLayout.smoothScrollTo(0, 0);
+                    createPageNumbers(); // Cập nhật lại số trang hiển thị
+                }
+            });
+
+            if (i == currentPage) {
+                // Đánh dấu trang hiện tại màu đỏ
+                pageNumber.setTextColor(Color.RED);
+                previousPageNumber = pageNumber;
+            }
+
+            pageNumbersLayout.addView(pageNumber); // Thêm số trang vào layout
+        }
+    }
+
+
+    // Xử lý sự kiện click cho nút "Next"
+// Xử lý sự kiện click cho nút "Next"
+    private void handleNextButton() {
+        if (currentPage < maxPages) {
+            currentPage++;
+            adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
+            createPageNumbers(); // Cập nhật lại số trang hiển thị
+
+            mainLayout.smoothScrollTo(0, 0);
+        }
+    }
+
+    // Xử lý sự kiện click cho nút "Prev"
+    private void handlePrevButton() {
+        if (currentPage > 1) {
+            currentPage--;
+            adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
+            createPageNumbers(); // Cập nhật lại số trang hiển thị
+
+            mainLayout.smoothScrollTo(0, 0);
+        }
+    }
+
+
 }
