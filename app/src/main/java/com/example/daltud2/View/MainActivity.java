@@ -1,6 +1,8 @@
 package com.example.daltud2.View;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +29,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daltud2.Control.ComicAdapter;
+import com.example.daltud2.Control.DataBaseSQLLite;
 import com.example.daltud2.Model.Comic;
+import com.example.daltud2.Model.NguoiDung;
 import com.example.daltud2.R;
 
 import java.util.ArrayList;
@@ -55,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private int pageSize = 20;
     private RecyclerView ListComic;
 
-
+    private DataBaseSQLLite dataBaseSQLLite;
 
 
     @Override
@@ -69,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
         v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
         return insets;
     });
+
+    // Khởi tạo cơ sở dữ liệu
+    dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
+    getAllAdmin();
 
     declareVal();
     createSampleData(200);
@@ -134,6 +142,35 @@ public class MainActivity extends AppCompatActivity {
     btnPrev.setOnClickListener(view -> handlePrevButton());
     btnNext.setOnClickListener(view -> handleNextButton());
 
+    }
+    private void getAllAdmin(){
+        if (dataBaseSQLLite == null) {
+            dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
+        }
+        Cursor cursor = dataBaseSQLLite.timKiemAdmin(dataBaseSQLLite.getReadableDatabase());
+        if (cursor != null) {
+            List<NguoiDung> adminList = new ArrayList<>(); // Danh sách lưu admin
+            while (cursor.moveToNext()) {
+                // Lấy thông tin từ cursor
+                @SuppressLint("Range") String idUser = cursor.getString(cursor.getColumnIndex("idUser"));
+                @SuppressLint("Range") String tenUser = cursor.getString(cursor.getColumnIndex("tenUser"));
+                @SuppressLint("Range") String matKhau = cursor.getString(cursor.getColumnIndex("matKhau"));
+                @SuppressLint("Range") String soDienThoai = cursor.getString(cursor.getColumnIndex("soDienThoai"));
+                @SuppressLint("Range") int role = cursor.getInt(cursor.getColumnIndex("role"));
+
+                // Tạo đối tượng NguoiDung và thêm vào danh sách
+                NguoiDung nguoiDung = new NguoiDung(idUser, tenUser, matKhau, soDienThoai, role);
+                adminList.add(nguoiDung);
+
+                // Ví dụ: in ra thông tin admin
+                Log.d("Admin Info", "ID: " + nguoiDung.getIdUser() + ", Name: " + nguoiDung.getTenUser());
+            }
+            cursor.close();
+
+            // Sử dụng adminList tùy ý
+            // Ví dụ: hiển thị số lượng admin
+            Log.d("Admin Count", "Total Admin: " + adminList.size());
+        }
     }
     private void colorUiChange(boolean isWhite) {
         if (isWhite) {
@@ -264,6 +301,4 @@ public class MainActivity extends AppCompatActivity {
             mainLayout.smoothScrollTo(0, 0);
         }
     }
-
-
 }
