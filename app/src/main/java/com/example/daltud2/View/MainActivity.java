@@ -19,6 +19,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -59,7 +60,13 @@ public class MainActivity extends AppCompatActivity {
     private int pageSize = 20;
     private RecyclerView ListComic;
 
+<<<<<<< Updated upstream
     private DataBaseSQLLite dataBaseSQLLite;
+=======
+    private Button topButton;
+
+
+>>>>>>> Stashed changes
 
 
     @Override
@@ -139,8 +146,45 @@ public class MainActivity extends AppCompatActivity {
     ListComic.setAdapter(adapter);
 
     createPageNumbers();
-    btnPrev.setOnClickListener(view -> handlePrevButton());
-    btnNext.setOnClickListener(view -> handleNextButton());
+    btnPrev.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (currentPage > 1) {
+                currentPage--;
+                adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
+                createPageNumbers(); // Cập nhật lại số trang hiển thị
+
+                mainLayout.smoothScrollTo(0, 0);
+            }
+        }
+    });
+    btnNext.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (currentPage < maxPages) {
+                currentPage++;
+                adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
+                createPageNumbers(); // Cập nhật lại số trang hiển thị
+
+                mainLayout.smoothScrollTo(0, 0);
+            }
+        }
+    });
+
+    mainLayout.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+        @Override
+        public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+            if( scrollY > 200){
+                topButton.setVisibility(View.VISIBLE);
+            }else topButton.setVisibility(View.GONE);
+        }
+    });
+    topButton.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            mainLayout.smoothScrollTo(0, 0);
+        }
+    });
 
     }
     private void getAllAdmin(){
@@ -216,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
         tv4 = (TextView) findViewById(R.id.textView4);
         body = (LinearLayout) findViewById(R.id.body);
         footer = (LinearLayout) findViewById(R.id.footer);
+        topButton = (Button) findViewById(R.id.topButton);
     }
 
     // Hàm tạo dữ liệu mẫu
@@ -241,7 +286,6 @@ public class MainActivity extends AppCompatActivity {
         pageNumbersLayout.removeAllViews(); // Xóa tất cả các TextView cũ
 
         maxPages = pageDataList.size(); // Tổng số trang
-        // Hiển thị tối đa 5 trang: Ví dụ từ trang 1 đến trang 5 hoặc trang hiện tại
         int startPage = Math.max(1, currentPage - 2); // Hiển thị từ trang hiện tại - 2
         int endPage = Math.min(startPage + 4, maxPages); // Hiển thị tối đa 5 trang (nếu còn đủ trang)
 
@@ -256,15 +300,15 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (previousPageNumber != null) {
-                        previousPageNumber.setTextColor(originalTextColor); // Đổi lại màu trang trước đó
+                        previousPageNumber.setTextColor(originalTextColor);
                     }
 
-                    pageNumber.setTextColor(Color.RED); // Đổi màu trang hiện tại
-                    currentPage = v.getId(); // Lấy ID của TextView đã click (số trang)
-                    adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu
+                    pageNumber.setTextColor(Color.RED);
+                    currentPage = v.getId();
+                    adapter.updateData(pageDataList.get(currentPage - 1));
                     previousPageNumber = pageNumber;
                     mainLayout.smoothScrollTo(0, 0);
-                    createPageNumbers(); // Cập nhật lại số trang hiển thị
+                    createPageNumbers();
                 }
             });
 
@@ -279,6 +323,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+<<<<<<< Updated upstream
     // Xử lý sự kiện click cho nút "Next"
 // Xử lý sự kiện click cho nút "Next"
     private void handleNextButton() {
@@ -302,3 +347,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+=======
+
+}
+>>>>>>> Stashed changes

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< Updated upstream
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+=======
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+>>>>>>> Stashed changes
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
+<<<<<<< Updated upstream
     android:layout_height="match_parent"
     app:layoutDescription="@xml/activity_main_scene"
     tools:context=".MainActivity">
@@ -22,3 +26,221 @@
             tools:ignore="MissingConstraints" />
     </LinearLayout>
 </LinearLayout>
+=======
+    android:layout_height="match_parent">
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#18191A"
+        tools:context=".View.MainActivity">
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/black"
+                    android:padding="16dp">
+
+                    <ImageButton
+                        android:id="@+id/logoQQ"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/black"
+                        app:srcCompat="@mipmap/logonight" />
+
+                    <ImageButton
+                        android:id="@+id/btnChange"
+                        android:layout_width="47dp"
+                        android:layout_height="48dp"
+                        android:background="@color/black"
+                        app:srcCompat="@drawable/baseline_light_mode_24" />
+
+                    <ImageButton
+                        android:id="@+id/search_button"
+                        android:layout_width="47dp"
+                        android:layout_height="48dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/black"
+                        app:srcCompat="@drawable/baseline_search_24" />
+
+                    <Button
+                        android:id="@+id/btnDK"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="Login" />
+
+                    <Button
+                        android:id="@+id/btnDN"
+                        android:layout_width="110dp"
+                        android:layout_height="wrap_content"
+                        android:text="Register" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/search_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    android:visibility="gone">
+
+                    <EditText
+                        android:id="@+id/search_input"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Tìm kiếm"
+                        android:inputType="text" />
+
+                    <Button
+                        android:id="@+id/search_Comics"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tìm" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#3A3D3D"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="362dp"
+                        android:layout_height="match_parent"
+                        android:background="#00000000"
+                        android:gravity="start|center_vertical"
+                        android:text="Trang chủ" />
+
+                    <ImageButton
+                        android:id="@+id/btnPopup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        app:srcCompat="@mipmap/popupmenu" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#18191A"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Comics:"
+                    android:textColor="@color/white"
+                    android:textSize="30dp"
+                    android:textStyle="bold|italic" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/ListComic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnPrev"
+                        android:layout_width="65dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="10dp"
+                        android:padding="10dp"
+                        android:text="{"
+                        android:textSize="18sp" />
+
+                    <LinearLayout
+                        android:id="@+id/pageNumbersLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"></LinearLayout>
+
+                    <Button
+                        android:id="@+id/btnNext"
+                        android:layout_width="65dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="10dp"
+                        android:text="}" />
+
+                    <Button
+                        android:id="@+id/btnEnd"
+                        android:layout_width="66dp"
+                        android:layout_height="60dp"
+                        android:text="}}" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/footer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Chỗ này se la` footer them ten thanh vien voi loi mot so thong tin " />
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Nút cố định ở góc dưới bên phải -->
+    <Button
+        android:id="@+id/topButton"
+        android:layout_width="45dp"
+        android:layout_height="28dp"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:alpha="0.8"
+        android:backgroundTint="#AA000000"
+        android:text="Top" />
+
+</FrameLayout>
+
+
+
+
+
+>>>>>>> Stashed changes
