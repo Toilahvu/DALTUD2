@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView previousPageNumber,tv4;
     private Button btnPrev;
     private Button btnNext;
+    private Button btnEnd;
+    private Button btnFirst;
     private LinearLayout pageNumbersLayout;
     private List<List<Comic>> pageDataList = new ArrayList<>();// chứa các mảng danh sách truện .
     private List<Comic> pageComic;//mảng chưa danh sách truyện
@@ -60,13 +62,13 @@ public class MainActivity extends AppCompatActivity {
     private int pageSize = 20;
     private RecyclerView ListComic;
 
-<<<<<<< Updated upstream
+
     private DataBaseSQLLite dataBaseSQLLite;
-=======
+
     private Button topButton;
 
 
->>>>>>> Stashed changes
+
 
 
     @Override
@@ -81,11 +83,13 @@ public class MainActivity extends AppCompatActivity {
         return insets;
     });
 
+    declareVal();
+
     // Khởi tạo cơ sở dữ liệu
     dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
     getAllAdmin();
 
-    declareVal();
+
     createSampleData(200);
     searchButton.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -145,7 +149,21 @@ public class MainActivity extends AppCompatActivity {
     ListComic.setLayoutManager(gridLayoutManager);
     ListComic.setAdapter(adapter);
 
+    //List truyện và nút điều hướng
     createPageNumbers();
+    btnFirst.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            currentPage = 1;
+            adapter.updateData(pageDataList.get(currentPage-1));
+            createPageNumbers();
+            btnFirst.setVisibility(View.GONE);
+            btnPrev.setVisibility(View.GONE);
+            btnNext.setVisibility(View.VISIBLE);
+            btnEnd.setVisibility(View.VISIBLE);
+            mainLayout.smoothScrollTo(0, 0);
+        }
+    });
     btnPrev.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -153,8 +171,14 @@ public class MainActivity extends AppCompatActivity {
                 currentPage--;
                 adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
                 createPageNumbers(); // Cập nhật lại số trang hiển thị
-
+                btnNext.setVisibility(View.VISIBLE);
+                btnEnd.setVisibility(View.VISIBLE);
                 mainLayout.smoothScrollTo(0, 0);
+            }else if(currentPage == 1 ){
+                btnFirst.setVisibility(View.GONE);
+                btnPrev.setVisibility(View.GONE);
+                btnNext.setVisibility(View.VISIBLE);
+                btnEnd.setVisibility(View.VISIBLE);
             }
         }
     });
@@ -165,12 +189,34 @@ public class MainActivity extends AppCompatActivity {
                 currentPage++;
                 adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
                 createPageNumbers(); // Cập nhật lại số trang hiển thị
-
+                btnFirst.setVisibility(View.VISIBLE);
+                btnPrev.setVisibility(View.VISIBLE);
                 mainLayout.smoothScrollTo(0, 0);
+            }else if(currentPage == maxPages){
+                btnFirst.setVisibility(View.VISIBLE);
+                btnPrev.setVisibility(View.VISIBLE);
+                btnNext.setVisibility(View.GONE);
+                btnEnd.setVisibility(View.GONE);
             }
         }
     });
+    btnEnd.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            currentPage = maxPages;
+            adapter.updateData(pageDataList.get(currentPage-1));
+            createPageNumbers();
 
+            btnFirst.setVisibility(View.VISIBLE);
+            btnPrev.setVisibility(View.VISIBLE);
+            btnNext.setVisibility(View.GONE);
+            btnEnd.setVisibility(View.GONE);
+
+            mainLayout.smoothScrollTo(0, 0);
+        }
+    });
+
+    //scroll và nút tính năng
     mainLayout.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
         @Override
         public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
@@ -211,8 +257,6 @@ public class MainActivity extends AppCompatActivity {
             }
             cursor.close();
 
-            // Sử dụng adminList tùy ý
-            // Ví dụ: hiển thị số lượng admin
             Log.d("Admin Count", "Total Admin: " + adminList.size());
         }
     }
@@ -243,7 +287,6 @@ public class MainActivity extends AppCompatActivity {
             footer.setBackgroundColor(Color.BLACK);
         }
     }
-
     private void declareVal(){
         searchBar = (LinearLayout) findViewById(R.id.search_bar);
        //searchInput = (EditText) findViewById(R.id.search_input);
@@ -261,6 +304,8 @@ public class MainActivity extends AppCompatActivity {
         body = (LinearLayout) findViewById(R.id.body);
         footer = (LinearLayout) findViewById(R.id.footer);
         topButton = (Button) findViewById(R.id.topButton);
+        btnEnd = (Button) findViewById(R.id.btnEnd);
+        btnFirst = (Button) findViewById(R.id.btnFirst);
     }
 
     // Hàm tạo dữ liệu mẫu
@@ -321,33 +366,5 @@ public class MainActivity extends AppCompatActivity {
             pageNumbersLayout.addView(pageNumber); // Thêm số trang vào layout
         }
     }
-
-
-<<<<<<< Updated upstream
-    // Xử lý sự kiện click cho nút "Next"
-// Xử lý sự kiện click cho nút "Next"
-    private void handleNextButton() {
-        if (currentPage < maxPages) {
-            currentPage++;
-            adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
-            createPageNumbers(); // Cập nhật lại số trang hiển thị
-
-            mainLayout.smoothScrollTo(0, 0);
-        }
-    }
-
-    // Xử lý sự kiện click cho nút "Prev"
-    private void handlePrevButton() {
-        if (currentPage > 1) {
-            currentPage--;
-            adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
-            createPageNumbers(); // Cập nhật lại số trang hiển thị
-
-            mainLayout.smoothScrollTo(0, 0);
-        }
-    }
 }
-=======
 
-}
->>>>>>> Stashed changes

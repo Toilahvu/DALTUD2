@@ -1,33 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< Updated upstream
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-=======
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
->>>>>>> Stashed changes
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-<<<<<<< Updated upstream
     android:layout_height="match_parent"
     app:layoutDescription="@xml/activity_main_scene"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Trang đăng nhập"
-            tools:ignore="MissingConstraints" />
-    </LinearLayout>
-</LinearLayout>
-=======
-    android:layout_height="match_parent">
     <androidx.core.widget.NestedScrollView
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -41,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
 
             <LinearLayout
 
@@ -179,11 +157,20 @@
                     android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/btnFirst"
+                        android:layout_width="65dp"
+                        android:layout_height="60dp"
+                        android:padding="10dp"
+                        android:text="{{"
+                        android:visibility="gone"
+                        android:textSize="18sp" />
+
+                    <Button
                         android:id="@+id/btnPrev"
                         android:layout_width="65dp"
                         android:layout_height="60dp"
-                        android:layout_marginLeft="10dp"
                         android:padding="10dp"
+                        android:visibility="gone"
                         android:text="{"
                         android:textSize="18sp" />
 
@@ -191,7 +178,7 @@
                         android:id="@+id/pageNumbersLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:orientation="horizontal"></LinearLayout>
+                        android:orientation="horizontal" />
 
                     <Button
                         android:id="@+id/btnNext"
@@ -243,4 +230,4 @@
 
 
 
->>>>>>> Stashed changes
+
