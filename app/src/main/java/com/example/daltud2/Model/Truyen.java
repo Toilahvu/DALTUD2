@@ -17,6 +17,10 @@ public class Truyen {
         this.urlAnhBia = urlAnhBia;
     }
 
+    public Truyen(String tenTruyen) {
+        this.tenTruyen = tenTruyen;
+    }
+
     // Getter và Setter
     public String getIdTruyen() {
         return idTruyen;

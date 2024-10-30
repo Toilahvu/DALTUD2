@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.io.File;
+
 public class DataBaseSQLLite extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "webDocTruyen";
     private static final int DATABASE_VERSION = 1;
@@ -52,19 +54,27 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 "idTruyen VARCHAR(50)," +
                 "chuongSo INT NOT NULL," +
                 "ngayPhatHanh DATE," +
-                "anhTruyen VARCHAR(255)," +
                 "FOREIGN KEY (idTruyen) REFERENCES truyen(idTruyen)" +
                 ");";
         db.execSQL(createChuongTruyenTable);
 
+        // Tạo bảng anh_chuong
+        String createAnhChuongTable = "CREATE TABLE IF NOT EXISTS anh_chuong (" +
+                "idAnh INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "idChapter VARCHAR(50), " +
+                "urlAnh VARCHAR(255) NOT NULL," +
+                "FOREIGN KEY (idChapter) REFERENCES chuong_truyen(idChapter)" +
+                ");";
+        db.execSQL(createAnhChuongTable);
+
         // Tạo bảng comment
         String createCommentTable = "CREATE TABLE IF NOT EXISTS comment (" +
                 "idComment VARCHAR(50) PRIMARY KEY," +
-                "idTruyen VARCHAR(50)," +
+                "idChapter VARCHAR(50)," +
                 "idUser VARCHAR(50)," +
                 "noiDungBinhLuan TEXT NOT NULL," +
                 "thoiGianBinhLuan DATE," +
-                "FOREIGN KEY (idTruyen) REFERENCES truyen(idTruyen)," +
+                "FOREIGN KEY (idChapter) REFERENCES chuong_truyen(idChapter)," +
                 "FOREIGN KEY (idUser) REFERENCES nguoi_dung(idUser)" +
                 ");";
         db.execSQL(createCommentTable);
@@ -114,7 +124,6 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Xóa các bảng nếu chúng tồn tại
         db.execSQL("DROP TABLE IF EXISTS truyen_address");
         db.execSQL("DROP TABLE IF EXISTS theo_doi_truyen");
         db.execSQL("DROP TABLE IF EXISTS new");
@@ -124,7 +133,6 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS truyen");
         db.execSQL("DROP TABLE IF EXISTS admin");
         db.execSQL("DROP TABLE IF EXISTS nguoi_dung");
-        // Tạo lại các bảng
         onCreate(db);
     }
 
@@ -153,44 +161,81 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
             // Chèn dữ liệu vào bảng truyen
             if (BangTrongko(db, "truyen")) {
                 String insertTruyen = "INSERT INTO truyen (idTruyen, tenTruyen, tenTacGia, ngayPhatHanh, moTaTruyen, urlAnhBia) VALUES " +
-                        "('truyen01', 'Truyen A', 'Tac Gia A', '2020-01-01', 'Mo ta ve truyen A', 'http://anhbia.com/a.jpg'), " +
-                        "('truyen02', 'Truyen B', 'Tac Gia B', '2021-02-02', 'Mo ta ve truyen B', 'http://anhbia.com/b.jpg'), " +
-                        "('truyen03', 'Truyen C', 'Tac Gia C', '2022-03-03', 'Mo ta ve truyen C', 'http://anhbia.com/c.jpg'), " +
-                        "('truyen04', 'Truyen D', 'Tac Gia D', '2023-04-04', 'Mo ta ve truyen D', 'http://anhbia.com/d.jpg'), " +
-                        "('truyen05', 'Truyen E', 'Tac Gia E', '2024-05-05', 'Mo ta ve truyen E', 'http://anhbia.com/e.jpg')";
+                        "('truyen01', 'Ta là tà đế', 'Đang cập nhật', '2019-11-13', 'Truyện tranh Ta Là Tà Đế được cập nhật nhanh và đầy đủ nhất tại TruyenQQ. Bạn đọc đừng quên để lại bình luận và chia sẻ, ủng hộ TruyenQQ ra các chương mới nhất của truyện Ta Là Tà Đế.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/ta-la-ta-de.jpg'), " +
+                        "('truyen02', 'Lăng tiên kỳ đàm', 'Đang cập nhật', '2021-05-09', 'Nhân vật chính xuyên qua thành một con hổ, sống cuộc sống yên bình êm ả của một sơn quân, chủ nhân của ngọn núi Baek. Bỗng một ngày xuất hiểu tiểu cô nương nhận sơn quân là tướng công, những chuyện rắc rối và ký lạ cũng từ đó bắt đầu....', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/ta-la-ta-de.jpg')";
                 db.execSQL(insertTruyen);
             }
 
             // Chèn dữ liệu vào bảng chuong_truyen
             if (BangTrongko(db, "chuong_truyen")) {
-                String insertChuongTruyen = "INSERT INTO chuong_truyen (idChapter, idTruyen, chuongSo, ngayPhatHanh, anhTruyen) VALUES " +
-                        "('chap01', 'truyen01', 1, '2020-01-10', 'http://anhtruyen.com/a1.jpg'), " +
-                        "('chap02', 'truyen02', 1, '2021-02-10', 'http://anhtruyen.com/b1.jpg'), " +
-                        "('chap03', 'truyen03', 1, '2022-03-10', 'http://anhtruyen.com/c1.jpg'), " +
-                        "('chap04', 'truyen04', 1, '2023-04-10', 'http://anhtruyen.com/d1.jpg'), " +
-                        "('chap05', 'truyen05', 1, '2024-05-10', 'http://anhtruyen.com/e1.jpg')";
+                String insertChuongTruyen = "INSERT INTO chuong_truyen (idChapter, idTruyen, chuongSo, ngayPhatHanh) VALUES " +
+                        "('Ta_La_Ta_De_Chap_0', 'truyen01', 1, '2019-11-13'), " +
+                        "('Lang_Tien_Ki_Dam_Chap_1', 'truyen02', 1, '2021-05-09')";
                 db.execSQL(insertChuongTruyen);
             }
 
+            // Chèn dữ liệu vào bảng anh_chuong
+            insertImagesIntoDB(this, db); // Gọi hàm chèn ảnh
+
             // Chèn dữ liệu vào bảng comment
             if (BangTrongko(db, "comment")) {
-                String insertComment = "INSERT INTO comment (idComment, idTruyen, idUser, noiDungBinhLuan, thoiGianBinhLuan) VALUES " +
-                        "('comment01', 'truyen01', 'user01', 'Hay qua!', '2020-01-15'), " +
-                        "('comment02', 'truyen02', 'user02', 'Rất hấp dẫn!', '2021-02-15'), " +
-                        "('comment03', 'truyen03', 'user03', 'Tác phẩm xuất sắc', '2022-03-15'), " +
-                        "('comment04', 'truyen04', 'user04', 'Rất hay và ý nghĩa', '2023-04-15'), " +
-                        "('comment05', 'truyen05', 'user05', 'Tôi thích truyện này', '2024-05-15')";
+                String insertComment = "INSERT INTO comment (idComment, idChapter, idUser, noiDungBinhLuan, thoiGianBinhLuan) VALUES " +
+                        "('comment01', 'Ta_La_Ta_De_Chap_0', 'user01', 'Hay qua!', '2020-01-15'), " +
+                        "('comment02', 'Ta_La_Ta_De_Chap_0', 'user02', 'Rất hấp dẫn!', '2021-02-15'), " +
+                        "('comment03', 'Ta_La_Ta_De_Chap_0', 'user03', 'Tác phẩm xuất sắc', '2022-03-15'), " +
+                        "('comment04', 'Lang_Tien_Ki_Dam_Chap_1', 'user04', 'Rất hay và ý nghĩa', '2023-04-15'), " +
+                        "('comment05', 'Lang_Tien_Ki_Dam_Chap_1', 'user05', 'Tôi thích truyện này', '2024-05-15')";
                 db.execSQL(insertComment);
             }
 
             // Chèn dữ liệu vào bảng address
             if (BangTrongko(db, "address")) {
                 String insertAddress = "INSERT INTO address (tenTag, moTaTag) VALUES " +
+                        "('Action', 'Truyện hành động'), " +
                         "('Adventure', 'Truyện phiêu lưu, hành động'), " +
-                        "('Romance', 'Truyện tình cảm, lãng mạn'), " +
+                        "('Anime', 'Truyện chuyển thể từ anime'), " +
+                        "('Chuyển Sinh', 'Truyện nhân vật chuyển sinh sang thế giới khác'), " +
+                        "('Cổ Đại', 'Truyện lấy bối cảnh thời cổ đại'), " +
                         "('Comedy', 'Truyện hài hước'), " +
+                        "('Comic', 'Truyện tranh theo phong cách comic'), " +
+                        "('Demons', 'Truyện về yêu ma, quỷ dữ'), " +
+                        "('Detective', 'Truyện trinh thám, điều tra'), " +
+                        "('Doujinshi', 'Truyện fanmade, do fan sáng tác'), " +
+                        "('Drama', 'Truyện kịch tính, nhiều cảm xúc'), " +
                         "('Fantasy', 'Truyện giả tưởng'), " +
-                        "('Horror', 'Truyện kinh dị')";
+                        "('Gender Bender', 'Truyện có yếu tố thay đổi giới tính'), " +
+                        "('Harem', 'Truyện với nhiều nhân vật yêu mến nhân vật chính'), " +
+                        "('Historical', 'Truyện lịch sử, có yếu tố lịch sử'), " +
+                        "('Horror', 'Truyện kinh dị'), " +
+                        "('Huyền Huyễn', 'Truyện huyền huyễn, phép thuật'), " +
+                        "('Isekai', 'Truyện nhân vật bị dịch chuyển sang thế giới khác'), " +
+                        "('Josei', 'Truyện dành cho nữ giới trưởng thành'), " +
+                        "('Mafia', 'Truyện về xã hội đen, mafia'), " +
+                        "('Magic', 'Truyện phép thuật'), " +
+                        "('Manhua', 'Truyện tranh Trung Quốc'), " +
+                        "('Manhwa', 'Truyện tranh Hàn Quốc'), " +
+                        "('Martial Arts', 'Truyện về võ thuật'), " +
+                        "('Military', 'Truyện có yếu tố quân sự'), " +
+                        "('Mystery', 'Truyện bí ẩn, hồi hộp'), " +
+                        "('Ngôn Tình', 'Truyện tình cảm'), " +
+                        "('One shot', 'Truyện ngắn chỉ có một tập'), " +
+                        "('Psychological', 'Truyện tâm lý'), " +
+                        "('Romance', 'Truyện tình cảm, lãng mạn'), " +
+                        "('School Life', 'Truyện về cuộc sống học đường'), " +
+                        "('Sci-fi', 'Truyện khoa học viễn tưởng'), " +
+                        "('Seinen', 'Truyện dành cho nam giới trưởng thành'), " +
+                        "('Shoujo', 'Truyện dành cho nữ giới trẻ tuổi'), " +
+                        "('Shoujo Ai', 'Truyện tình cảm giữa các nhân vật nữ'), " +
+                        "('Shounen', 'Truyện dành cho nam giới trẻ tuổi'), " +
+                        "('Shounen Ai', 'Truyện tình cảm giữa các nhân vật nam'), " +
+                        "('Slice of life', 'Truyện về cuộc sống thường ngày'), " +
+                        "('Sports', 'Truyện thể thao'), " +
+                        "('Supernatural', 'Truyện siêu nhiên'), " +
+                        "('Tragedy', 'Truyện bi kịch'), " +
+                        "('Trọng Sinh', 'Truyện nhân vật sống lại hoặc tái sinh'), " +
+                        "('Truyện Màu', 'Truyện tranh màu'), " +
+                        "('Webtoon', 'Truyện tranh phong cách Hàn Quốc, thường được đăng trên web'), " +
+                        "('Xuyên Không', 'Truyện về nhân vật xuyên không gian hoặc thời gian');";
                 db.execSQL(insertAddress);
             }
 
@@ -210,20 +255,23 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 String insertTheoDoiTruyen = "INSERT INTO theo_doi_truyen (idUser, idTruyen, ngayBatDau, trangThaiTheoDoi) VALUES " +
                         "('user01', 'truyen01', '2020-01-05', 1), " +
                         "('user02', 'truyen02', '2021-02-05', 1), " +
-                        "('user03', 'truyen03', '2022-03-05', 1), " +
-                        "('user04', 'truyen04', '2023-04-05', 1), " +
-                        "('user05', 'truyen05', '2024-05-05', 1)";
+                        "('user03', 'truyen01', '2022-03-05', 1), " +
+                        "('user04', 'truyen02', '2023-04-05', 1), " +
+                        "('user05', 'truyen02', '2024-05-05', 1)";
                 db.execSQL(insertTheoDoiTruyen);
             }
 
             // Chèn dữ liệu vào bảng truyen_address
             if (BangTrongko(db, "truyen_address")) {
                 String insertTruyenAddress = "INSERT INTO truyen_address (idTruyen, tenTag) VALUES " +
-                        "('truyen01', 'Adventure'), " +
-                        "('truyen02', 'Romance'), " +
-                        "('truyen03', 'Comedy'), " +
-                        "('truyen04', 'Fantasy'), " +
-                        "('truyen05', 'Horror')";
+                        "('truyen01', 'Supernatural'), " +
+                        "('truyen01', 'Manhua'), " +
+                        "('truyen01', 'Xuyên Không'), " +
+                        "('truyen01', 'Truyện Màu'), " +
+                        "('truyen02', 'Adventure'), " +
+                        "('truyen02', 'Action'), " +
+                        "('truyen02', 'Truyện Màu'), " +
+                        "('truyen02', 'Manhua')";
                 db.execSQL(insertTruyenAddress);
             }
 
@@ -241,9 +289,51 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         return count == 0;
     }
 
+    public void insertImagesIntoDB(DataBaseSQLLite context, SQLiteDatabase db) {
+        // Đường dẫn tới thư mục chứa ảnh truyện
+        String comicsPath = "/data/data/com.example.daltud2/files/images/comics";
+        File comicsFolder = new File(comicsPath);
+
+        // Chỉ chèn nếu bảng anh_chuong trống
+        if (BangTrongko(db, "anh_chuong")) {
+            File[] stories = comicsFolder.listFiles(); // Lấy tất cả thư mục truyện
+            if (stories != null) {
+                for (File story : stories) {
+                    if (story.isDirectory()) { // Kiểm tra nếu là thư mục truyện
+                        File[] chapters = story.listFiles(); // Lấy tất cả thư mục chương
+                        if (chapters != null) {
+                            for (File chapter : chapters) {
+                                if (chapter.isDirectory()) { // Kiểm tra nếu là thư mục chương
+                                    File[] images = chapter.listFiles(); // Lấy tất cả tệp trong thư mục chương
+                                    if (images != null) {
+                                        for (File image : images) {
+                                            if (image.isFile() && image.getName().endsWith(".jpg")) { // Chỉ xử lý tệp ảnh .jpg
+                                                String imageName = image.getName();
+                                                String chapterId = story.getName() + "_" + chapter.getName(); // Tạo idChapter từ tên truyện và chương
+
+                                                // Chèn vào bảng
+                                                String insertQuery = "INSERT INTO anh_chuong (idChapter, urlAnh) VALUES (?, ?)";
+                                                db.execSQL(insertQuery, new Object[]{chapterId, "file://" + image.getAbsolutePath()}); // Sử dụng file:// để chỉ đường dẫn tệp
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public Cursor timKiemAdmin(SQLiteDatabase db) {
         String query = "SELECT nguoi_dung.* FROM nguoi_dung " +
                 "INNER JOIN admin ON nguoi_dung.idUser = admin.idUser";
+        return db.rawQuery(query, null);
+    }
+
+    public Cursor getAllTruyen(SQLiteDatabase db) {
+        String query = "SELECT * FROM truyen";
         return db.rawQuery(query, null);
     }
 

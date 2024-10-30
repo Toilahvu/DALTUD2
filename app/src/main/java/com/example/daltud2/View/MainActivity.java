@@ -32,6 +32,7 @@ import com.example.daltud2.Control.ComicAdapter;
 import com.example.daltud2.Control.DataBaseSQLLite;
 import com.example.daltud2.Model.Comic;
 import com.example.daltud2.Model.NguoiDung;
+import com.example.daltud2.Model.Truyen;
 import com.example.daltud2.R;
 
 import java.util.ArrayList;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Khởi tạo cơ sở dữ liệu
     dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
-    getAllAdmin();
+    getAllruyen();
 
 
     createSampleData(200);
@@ -234,32 +235,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
-    private void getAllAdmin(){
+    private void getAllruyen(){
         if (dataBaseSQLLite == null) {
             dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
         }
-        Cursor cursor = dataBaseSQLLite.timKiemAdmin(dataBaseSQLLite.getReadableDatabase());
+        Cursor cursor = dataBaseSQLLite.getAllTruyen(dataBaseSQLLite.getReadableDatabase());
         if (cursor != null) {
-            List<NguoiDung> adminList = new ArrayList<>(); // Danh sách lưu admin
+            List<Truyen> truyenList = new ArrayList<>(); // Danh sách lưu admin
             while (cursor.moveToNext()) {
                 // Lấy thông tin từ cursor
-                @SuppressLint("Range") String idUser = cursor.getString(cursor.getColumnIndex("idUser"));
-                @SuppressLint("Range") String tenUser = cursor.getString(cursor.getColumnIndex("tenUser"));
-                @SuppressLint("Range") String matKhau = cursor.getString(cursor.getColumnIndex("matKhau"));
-                @SuppressLint("Range") String soDienThoai = cursor.getString(cursor.getColumnIndex("soDienThoai"));
-                @SuppressLint("Range") int role = cursor.getInt(cursor.getColumnIndex("role"));
+                @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
 
                 // Tạo đối tượng NguoiDung và thêm vào danh sách
-                NguoiDung nguoiDung = new NguoiDung(idUser, tenUser, matKhau, soDienThoai, role);
-                adminList.add(nguoiDung);
+                Truyen truyen = new Truyen(tenTruyen);
+                truyenList.add(truyen);
 
                 // Ví dụ: in ra thông tin admin
-                Log.d("Admin Info", "ID: " + nguoiDung.getIdUser() + ", Name: " + nguoiDung.getTenUser());
+                Log.d("Ten truyen", "Name: " + truyen.getTenTruyen());
             }
             cursor.close();
 
-            Log.d("Admin Count", "Total Admin: " + adminList.size());
+            Log.d("Truyen Count", "Total Truyen: " + truyenList.size());
         }
     }
 
