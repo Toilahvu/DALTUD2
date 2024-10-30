@@ -26,7 +26,6 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daltud2.Control.ComicAdapter;
@@ -39,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
     //khai báo biến
     private LinearLayout searchBar,header,body,footer;
     private NestedScrollView mainLayout;
@@ -50,13 +50,12 @@ public class MainActivity extends AppCompatActivity {
     private int maxPages;
     private int displayedStartPage = 1;
     private TextView previousPageNumber,tv4;
-    private Button btnPrev;
-    private Button btnNext;
-    private Button btnEnd;
-    private Button btnFirst;
+    private ImageButton btnBackwardStep;
+    private ImageButton btnForwardStep;
+    private ImageButton btnForwardFast;
+    private ImageButton btnBackwardFast;
     private LinearLayout pageNumbersLayout;
-    private List<List<Comic>> pageDataList = new ArrayList<>();// chứa các mảng danh sách truện .
-    private List<Comic> pageComic;//mảng chưa danh sách truyện
+    private final List<List<Comic>> pageDataList = new ArrayList<>();// chứa các mảng danh sách truện .
     private int currentPage = 1;
     private ComicAdapter adapter;
     private int pageSize = 20;
@@ -66,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
     private DataBaseSQLLite dataBaseSQLLite;
 
     private Button topButton;
-
-
 
 
 
@@ -150,89 +147,94 @@ public class MainActivity extends AppCompatActivity {
     ListComic.setAdapter(adapter);
 
     //List truyện và nút điều hướng
-    createPageNumbers();
-    btnFirst.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            currentPage = 1;
-            adapter.updateData(pageDataList.get(currentPage-1));
-            createPageNumbers();
-            btnFirst.setVisibility(View.GONE);
-            btnPrev.setVisibility(View.GONE);
-            btnNext.setVisibility(View.VISIBLE);
-            btnEnd.setVisibility(View.VISIBLE);
-            mainLayout.smoothScrollTo(0, 0);
-        }
-    });
-    btnPrev.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (currentPage > 1) {
-                currentPage--;
-                adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
-                createPageNumbers(); // Cập nhật lại số trang hiển thị
-                btnNext.setVisibility(View.VISIBLE);
-                btnEnd.setVisibility(View.VISIBLE);
+        createPageNumbers();
+        //Trở lại trang đầu ngay lập tức
+        btnBackwardFast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentPage = 1;
+                adapter.updateData(pageDataList.get(currentPage-1));
+                createPageNumbers();
+                btnBackwardFast.setVisibility(View.GONE);
+                btnBackwardStep.setVisibility(View.GONE);
+                btnForwardStep.setVisibility(View.VISIBLE);
+                btnForwardStep.setVisibility(View.VISIBLE);
                 mainLayout.smoothScrollTo(0, 0);
-            }else if(currentPage == 1 ){
-                btnFirst.setVisibility(View.GONE);
-                btnPrev.setVisibility(View.GONE);
-                btnNext.setVisibility(View.VISIBLE);
-                btnEnd.setVisibility(View.VISIBLE);
             }
-        }
-    });
-    btnNext.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (currentPage < maxPages) {
-                currentPage++;
-                adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
-                createPageNumbers(); // Cập nhật lại số trang hiển thị
-                btnFirst.setVisibility(View.VISIBLE);
-                btnPrev.setVisibility(View.VISIBLE);
+        });
+        //trở lại trang trước
+        btnBackwardStep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (currentPage > 1) {
+                    currentPage--;
+                    adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
+                    createPageNumbers(); // Cập nhật lại số trang hiển thị
+                    btnForwardStep.setVisibility(View.VISIBLE);
+                    btnForwardStep.setVisibility(View.VISIBLE);
+                    mainLayout.smoothScrollTo(0, 0);
+                }else if(currentPage == 1 ){
+                    btnBackwardFast.setVisibility(View.GONE);
+                    btnBackwardStep.setVisibility(View.GONE);
+                    btnForwardStep.setVisibility(View.VISIBLE);
+                    btnForwardStep.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+        //Tiến lên trang trước
+        btnForwardStep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (currentPage < maxPages) {
+                    currentPage++;
+                    adapter.updateData(pageDataList.get(currentPage - 1)); // Cập nhật dữ liệu trang mới
+                    createPageNumbers(); // Cập nhật lại số trang hiển thị
+                    btnBackwardFast.setVisibility(View.VISIBLE);
+                    btnBackwardStep.setVisibility(View.VISIBLE);
+                    mainLayout.smoothScrollTo(0, 0);
+                }else if(currentPage == maxPages){
+                    btnBackwardFast.setVisibility(View.VISIBLE);
+                    btnBackwardStep.setVisibility(View.VISIBLE);
+                    btnForwardStep.setVisibility(View.GONE);
+                    btnForwardStep.setVisibility(View.GONE);
+                }
+            }
+        });
+        //về trang cuối ngay lập tức
+        btnForwardFast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentPage = maxPages;
+                adapter.updateData(pageDataList.get(currentPage-1));
+                createPageNumbers();
+
+                btnBackwardFast.setVisibility(View.VISIBLE);
+                btnBackwardStep.setVisibility(View.VISIBLE);
+                btnForwardStep.setVisibility(View.GONE);
+                btnForwardFast.setVisibility(View.GONE);
+
                 mainLayout.smoothScrollTo(0, 0);
-            }else if(currentPage == maxPages){
-                btnFirst.setVisibility(View.VISIBLE);
-                btnPrev.setVisibility(View.VISIBLE);
-                btnNext.setVisibility(View.GONE);
-                btnEnd.setVisibility(View.GONE);
             }
-        }
-    });
-    btnEnd.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            currentPage = maxPages;
-            adapter.updateData(pageDataList.get(currentPage-1));
-            createPageNumbers();
-
-            btnFirst.setVisibility(View.VISIBLE);
-            btnPrev.setVisibility(View.VISIBLE);
-            btnNext.setVisibility(View.GONE);
-            btnEnd.setVisibility(View.GONE);
-
-            mainLayout.smoothScrollTo(0, 0);
-        }
-    });
+        });
 
     //scroll và nút tính năng
-    mainLayout.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
-        @Override
-        public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-            if( scrollY > 200){
-                topButton.setVisibility(View.VISIBLE);
-            }else topButton.setVisibility(View.GONE);
-        }
-    });
-    topButton.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            mainLayout.smoothScrollTo(0, 0);
-        }
-    });
+        mainLayout.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(@NonNull NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if( scrollY > 200){
+                    topButton.setVisibility(View.VISIBLE);
+                }else topButton.setVisibility(View.GONE);
+            }
+        });
+        topButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mainLayout.smoothScrollTo(0, 0);
+            }
+        });
 
     }
+
     private void getAllAdmin(){
         if (dataBaseSQLLite == null) {
             dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
@@ -260,6 +262,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Admin Count", "Total Admin: " + adminList.size());
         }
     }
+
     private void colorUiChange(boolean isWhite) {
         if (isWhite) {
             mainLayout.setBackgroundColor(Color.WHITE);
@@ -273,6 +276,10 @@ public class MainActivity extends AppCompatActivity {
             tv4.setTextColor(Color.BLACK);
             body.setBackgroundColor(Color.WHITE);
             footer.setBackgroundColor(Color.WHITE);
+            btnForwardFast.setColorFilter(Color.BLACK);
+            btnBackwardFast.setColorFilter(Color.BLACK);
+            btnForwardStep.setColorFilter(Color.BLACK);
+            btnBackwardStep.setColorFilter(Color.BLACK);
         } else {
             mainLayout.setBackgroundColor(Color.BLACK);
             logoQQ.setBackgroundColor(Color.BLACK);
@@ -285,8 +292,13 @@ public class MainActivity extends AppCompatActivity {
             tv4.setTextColor(Color.WHITE);
             body.setBackgroundColor(Color.BLACK);
             footer.setBackgroundColor(Color.BLACK);
+            btnForwardFast.setColorFilter(Color.WHITE);
+            btnBackwardFast.setColorFilter(Color.WHITE);
+            btnForwardStep.setColorFilter(Color.WHITE);
+            btnBackwardStep.setColorFilter(Color.WHITE);
         }
     }
+
     private void declareVal(){
         searchBar = (LinearLayout) findViewById(R.id.search_bar);
        //searchInput = (EditText) findViewById(R.id.search_input);
@@ -296,16 +308,16 @@ public class MainActivity extends AppCompatActivity {
         mainLayout = (NestedScrollView) findViewById(R.id.main);
         header = (LinearLayout) findViewById(R.id.header);
         btnPopup = (ImageButton) findViewById(R.id.btnPopup);
-        btnPrev = (Button) findViewById(R.id.btnPrev);
-        btnNext = (Button) findViewById(R.id.btnNext);
+        btnBackwardStep = (ImageButton)  findViewById(R.id.btnBackwardStep);
+        btnForwardStep = (ImageButton) findViewById(R.id.btnForwardStep);
         ListComic = (RecyclerView) findViewById(R.id.ListComic);
         pageNumbersLayout = (LinearLayout)  findViewById(R.id.pageNumbersLayout);
         tv4 = (TextView) findViewById(R.id.textView4);
         body = (LinearLayout) findViewById(R.id.body);
         footer = (LinearLayout) findViewById(R.id.footer);
         topButton = (Button) findViewById(R.id.topButton);
-        btnEnd = (Button) findViewById(R.id.btnEnd);
-        btnFirst = (Button) findViewById(R.id.btnFirst);
+        btnForwardFast = (ImageButton) findViewById(R.id.btnForwardFast);
+        btnBackwardFast = (ImageButton) findViewById(R.id.btnBackwardFast);
     }
 
     // Hàm tạo dữ liệu mẫu
@@ -321,7 +333,8 @@ public class MainActivity extends AppCompatActivity {
         int startIndex = 0;
         while (startIndex < fullDataList.size()) {
             int endIndex = Math.min(startIndex + pageSize, fullDataList.size());
-            pageComic = new ArrayList<>(fullDataList.subList(startIndex, endIndex));
+            //mảng chưa danh sách truyện
+            List<Comic> pageComic = new ArrayList<>(fullDataList.subList(startIndex, endIndex));
             pageDataList.add(pageComic);
             startIndex += pageSize;
         }
@@ -358,9 +371,10 @@ public class MainActivity extends AppCompatActivity {
             });
 
             if (i == currentPage) {
-                // Đánh dấu trang hiện tại màu đỏ
-                pageNumber.setTextColor(Color.RED);
+                pageNumber.setTextColor(Color.parseColor("#FFA500"));
                 previousPageNumber = pageNumber;
+            } else {
+                pageNumber.setTextColor(Color.GRAY);
             }
 
             pageNumbersLayout.addView(pageNumber); // Thêm số trang vào layout

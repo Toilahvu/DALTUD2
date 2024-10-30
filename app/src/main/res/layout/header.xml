@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:padding="16dp">
+
+        <ImageButton
+            android:id="@+id/logoQQ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            app:srcCompat="@mipmap/logonight"
+            android:contentDescription="logo App"
+            tools:ignore="HardcodedText" />
+
+        <ImageButton
+            android:id="@+id/btnChange"
+            android:layout_width="47dp"
+            android:layout_height="48dp"
+            android:background="@color/black"
+            app:srcCompat="@drawable/baseline_light_mode_24"
+            android:contentDescription="UI change "
+            tools:ignore="HardcodedText" />
+
+        <ImageButton
+            android:id="@+id/search_button"
+            android:layout_width="47dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:background="@color/black"
+            app:srcCompat="@drawable/baseline_search_24"
+            android:contentDescription="search Comics"
+            tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/btnDK"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Login"
+            tools:ignore="HardcodedText"/>
+
+        <Button
+            android:id="@+id/btnDN"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:text="Register"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/search_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:autofillHints=""
+            android:hint="Tìm kiếm"
+            android:inputType="text"
+            tools:ignore="HardcodedText"/>
+
+        <Button
+            android:id="@+id/search_Comics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tìm"
+            tools:ignore="HardcodedText"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>
