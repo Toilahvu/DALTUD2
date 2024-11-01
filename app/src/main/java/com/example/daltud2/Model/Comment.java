@@ -2,14 +2,14 @@ package com.example.daltud2.Model;
 
 public class Comment {
     private String idComment;
-    private String idTruyen;
+    private String idChapter;
     private String idUser;
     private String noiDungBinhLuan;
     private String thoiGianBinhLuan;
 
-    public Comment(String idComment, String idTruyen, String idUser, String noiDungBinhLuan, String thoiGianBinhLuan) {
+    public Comment(String idComment, String idChapter, String idUser, String noiDungBinhLuan, String thoiGianBinhLuan) {
         this.idComment = idComment;
-        this.idTruyen = idTruyen;
+        this.idChapter = idChapter;
         this.idUser = idUser;
         this.noiDungBinhLuan = noiDungBinhLuan;
         this.thoiGianBinhLuan = thoiGianBinhLuan;
@@ -24,12 +24,12 @@ public class Comment {
         this.idComment = idComment;
     }
 
-    public String getIdTruyen() {
-        return idTruyen;
+    public String getIdChapter() {
+        return idChapter;
     }
 
-    public void setIdTruyen(String idTruyen) {
-        this.idTruyen = idTruyen;
+    public void setIdChapter(String idChapter) {
+        this.idChapter = idChapter;
     }
 
     public String getIdUser() {

@@ -3,12 +3,10 @@ package com.example.daltud2.Model;
 public class Admin {
     private String idAdmin;
     private String idUser;
-    private int role;
 
-    public Admin(String idAdmin, String idUser, int role) {
+    public Admin(String idAdmin, String idUser) {
         this.idAdmin = idAdmin;
         this.idUser = idUser;
-        this.role = role;
     }
 
     // Getter và Setter
@@ -26,14 +24,6 @@ public class Admin {
 
     public void setIdUser(String idUser) {
         this.idUser = idUser;
-    }
-
-    public int getRole() {
-        return role;
-    }
-
-    public void setRole(int role) {
-        this.role = role;
     }
 }
 

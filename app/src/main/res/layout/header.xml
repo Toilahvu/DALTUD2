@@ -42,7 +42,7 @@
             tools:ignore="HardcodedText" />
 
         <Button
-            android:id="@+id/btnDK"
+            android:id="@+id/btnDN"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -50,7 +50,7 @@
             tools:ignore="HardcodedText"/>
 
         <Button
-            android:id="@+id/btnDN"
+            android:id="@+id/btnDK"
             android:layout_width="110dp"
             android:layout_height="wrap_content"
             android:text="Register"

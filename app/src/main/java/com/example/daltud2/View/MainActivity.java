@@ -30,10 +30,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daltud2.Control.ComicAdapter;
 import com.example.daltud2.Control.DataBaseSQLLite;
+import com.example.daltud2.LoginActivity;
 import com.example.daltud2.Model.Comic;
 import com.example.daltud2.Model.NguoiDung;
 import com.example.daltud2.Model.Truyen;
 import com.example.daltud2.R;
+import com.example.daltud2.RegisterActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private int pageSize = 20;
     private RecyclerView ListComic;
 
+    private Button btnLogin;
+    private Button btnRegister;
 
     private DataBaseSQLLite dataBaseSQLLite;
 
@@ -84,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
     declareVal();
 
     // Khởi tạo cơ sở dữ liệu
-    dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
-    getAllruyen();
+    dataBaseSQLLite = new DataBaseSQLLite(this);
+        getAllruyen();
 
 
     createSampleData(200);
@@ -107,39 +111,56 @@ public class MainActivity extends AppCompatActivity {
     });
 
     btnChange.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isWhite = !isWhite;
-                colorUiChange(isWhite);
-            }
-        });
+        @Override
+        public void onClick(View view) {
+            isWhite = !isWhite;
+            colorUiChange(isWhite);
+        }
+    });
 
     btnPopup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(MainActivity.this,view);
-                popupMenu.getMenuInflater().inflate(R.menu.menu_item, popupMenu.getMenu());
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        if(menuItem.getItemId() == R.id.item_1){
-                            Intent intent = new Intent(MainActivity.this,searchTheLoai.class);
-                            startActivity(intent);
-                        }else if (menuItem.getItemId() == R.id.item_2) {
-                            Intent intent = new Intent(MainActivity.this, searchTheLoai.class);
-                            startActivity(intent);
-                        }else {
-                            Intent intent = new Intent(MainActivity.this, searchTheLoai.class);
-                            startActivity(intent);
-                        }
-
-                        return true;
+        @Override
+        public void onClick(View view) {
+            PopupMenu popupMenu = new PopupMenu(MainActivity.this,view);
+            popupMenu.getMenuInflater().inflate(R.menu.menu_item, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    if(menuItem.getItemId() == R.id.item_1){
+                        Intent intent = new Intent(MainActivity.this,searchTheLoai.class);
+                        startActivity(intent);
+                    }else if (menuItem.getItemId() == R.id.item_2) {
+                        Intent intent = new Intent(MainActivity.this, searchTheLoai.class);
+                        startActivity(intent);
+                    }else {
+                        Intent intent = new Intent(MainActivity.this, searchTheLoai.class);
+                        startActivity(intent);
                     }
-                });
-                popupMenu.show();
-            }
-        });
 
+                    return true;
+                }
+            });
+            popupMenu.show();
+        }
+    });
+
+    //Mở trang login
+    btnLogin.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+        }
+    });
+
+    //Mở trang Register
+    btnRegister.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+            startActivity(intent);
+        }
+    });
 
     // Khởi tạo Adapter với dữ liệu của trang đầu tiên
     adapter = new ComicAdapter(pageDataList.get(currentPage-1));
@@ -314,6 +335,8 @@ public class MainActivity extends AppCompatActivity {
         topButton = (Button) findViewById(R.id.topButton);
         btnForwardFast = (ImageButton) findViewById(R.id.btnForwardFast);
         btnBackwardFast = (ImageButton) findViewById(R.id.btnBackwardFast);
+        btnLogin = (Button) findViewById(R.id.btnDN);
+        btnRegister = (Button) findViewById(R.id.btnDK);
     }
 
     // Hàm tạo dữ liệu mẫu

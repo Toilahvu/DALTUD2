@@ -1,11 +1,16 @@
 package com.example.daltud2.Control;
 
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
+import java.util.Random;
+import com.example.daltud2.Model.NguoiDung;
 
 import java.io.File;
 
@@ -13,9 +18,16 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "webDocTruyen";
     private static final int DATABASE_VERSION = 1;
 
-    public DataBaseSQLLite(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
+    // Constructor có tham số tên cơ sở dữ liệu
+    public DataBaseSQLLite(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
+
+    // Constructor rút gọn, tự động sử dụng tên cơ sở dữ liệu mặc định
+    public DataBaseSQLLite(Context context) {
+        this(context, "webDocTruyen.db", null, DATABASE_VERSION);
+    }
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -25,6 +37,7 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 "tenUser VARCHAR(255) NOT NULL," +
                 "matKhau VARCHAR(255) NOT NULL," +
                 "soDienThoai VARCHAR(15)," +
+                "email VARCHAR(255) NOT NULL," +   // Thêm cột email
                 "role TINYINT NOT NULL DEFAULT 0" + // 0: user bình thường, 1: admin
                 ");";
         db.execSQL(createNguoiDungTable);
@@ -141,12 +154,12 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         try {
             // Chèn dữ liệu vào bảng nguoi_dung
             if (BangTrongko(db, "nguoi_dung")) {
-                String insertNguoiDung = "INSERT INTO nguoi_dung (idUser, tenUser, matKhau, soDienThoai, role) VALUES " +
-                        "('user01', 'Nguyen Van A', 'admin', '0900000001', 1), " +  // user01 là admin
-                        "('user02', 'Le Thi B', '234', '0900000002', 0), " +       // user02 là user bình thường
-                        "('user03', 'Tran Van C', '345', '0900000003', 0), " +    // user03 là user bình thường
-                        "('user04', 'Pham Thi D', '456', '0900000004', 0), " +     // user04 là user bình thường
-                        "('user05', 'Hoang Van E', '567', '0900000005', 0)";        // user05 là user bình thường
+                String insertNguoiDung = "INSERT INTO nguoi_dung (idUser, tenUser, matKhau, soDienThoai, email, role) VALUES " +
+                        "('user01', 'Nguyen Van A', 'admin', '0900000001', 'nguyenvana@example.com', 1), " +  // user01 là admin
+                        "('user02', 'Le Thi B', '234', '0900000002', 'lethib@example.com', 0), " +          // user02 là user bình thường
+                        "('user03', 'Tran Van C', '345', '0900000003', 'tranvanc@example.com', 0), " +      // user03 là user bình thường
+                        "('user04', 'Pham Thi D', '456', '0900000004', 'phamthid@example.com', 0), " +      // user04 là user bình thường
+                        "('user05', 'Hoang Van E', '567', '0900000005', 'hoangvane@example.com', 0)";       // user05 là user bình thường
                 db.execSQL(insertNguoiDung);
             }
 
@@ -326,15 +339,95 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         }
     }
 
+    // select tất cả admin
     public Cursor timKiemAdmin(SQLiteDatabase db) {
         String query = "SELECT nguoi_dung.* FROM nguoi_dung " +
                 "INNER JOIN admin ON nguoi_dung.idUser = admin.idUser";
         return db.rawQuery(query, null);
     }
 
+    // select tất cả truyện
     public Cursor getAllTruyen(SQLiteDatabase db) {
         String query = "SELECT * FROM truyen";
         return db.rawQuery(query, null);
+    }
+
+    // select tài khoản
+    public NguoiDung kiemTraTaiKhoanMatKhau(SQLiteDatabase db, String emaill, String password) {
+        String query = "SELECT * FROM nguoi_dung WHERE email = ? AND matKhau = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{emaill, password});
+
+        if (cursor.moveToFirst()) {
+            @SuppressLint("Range") String idUser = cursor.getString(cursor.getColumnIndex("idUser"));
+            @SuppressLint("Range") String tenUser = cursor.getString(cursor.getColumnIndex("tenUser"));
+            @SuppressLint("Range") String matKhau = cursor.getString(cursor.getColumnIndex("matKhau"));
+            @SuppressLint("Range") String soDienThoai = cursor.getString(cursor.getColumnIndex("soDienThoai"));
+            @SuppressLint("Range") String email = cursor.getString(cursor.getColumnIndex("email"));
+            @SuppressLint("Range") int role = cursor.getInt(cursor.getColumnIndex("role"));
+
+            cursor.close();
+            return new NguoiDung(idUser, tenUser, matKhau, soDienThoai, email, role);
+        } else {
+            cursor.close();
+            return null; // Không tìm thấy người dùng
+        }
+    }
+
+    // Tạo idUser ngẫu nhiên
+    private String randomIdUsers(){
+        Random random = new Random();
+        String letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        String digits = "0123456789";
+
+        // Lấy 2 chữ cái ngẫu nhiên
+        String randomLetters = "" + letters.charAt(random.nextInt(letters.length()))
+                + letters.charAt(random.nextInt(letters.length()));
+
+        // Lấy 2 chữ số ngẫu nhiên
+        String randomDigits = "" + digits.charAt(random.nextInt(digits.length()))
+                + digits.charAt(random.nextInt(digits.length()));
+
+        return "User" + randomDigits + randomLetters;
+    }
+
+    //kiểm tra người dùng đã từng đăng ký chưa dựa vào email
+    public boolean kiemTraEmailTonTai(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM nguoi_dung WHERE email = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{email});
+        boolean exists = cursor.moveToFirst(); // Trả về true nếu có email
+        cursor.close();
+        db.close();
+        return exists;
+    }
+    // Thêm người dùng mới
+    public void insertNguoiDung(String email, String matKhau) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Tạo một giá trị idUser ngẫu nhiên từ User + 2 chữ số và 2 chữ cái
+        String idUser = randomIdUsers();
+
+        // Lấy tên người dùng từ email
+        String tenUser = email.substring(0, email.indexOf('@'));
+
+        // Sử dụng ContentValues để chèn dữ liệu
+        ContentValues values = new ContentValues();
+        values.put("idUser", idUser);
+        values.put("tenUser", tenUser);
+        values.put("matKhau", matKhau);
+        values.put("soDienThoai", "");
+        values.put("email", email);
+        values.put("role", 0);
+
+        // Sử dụng phương thức insert để chèn dữ liệu và kiểm tra kết quả
+        long result = db.insert("nguoi_dung", null, values);
+        db.close();
+
+        if (result == -1) {
+            Log.e("InsertUser", "Error inserting user");
+        } else {
+            Log.d("InsertUser", "User inserted successfully");
+        }
     }
 
 }

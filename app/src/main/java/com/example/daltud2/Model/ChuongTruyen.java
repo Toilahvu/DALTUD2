@@ -5,14 +5,12 @@ public class ChuongTruyen {
     private String idTruyen;
     private int chuongSo;
     private String ngayPhatHanh;
-    private String anhTruyen;
 
-    public ChuongTruyen(String idChapter, String idTruyen, int chuongSo, String ngayPhatHanh, String anhTruyen) {
+    public ChuongTruyen(String idChapter, String idTruyen, int chuongSo, String ngayPhatHanh) {
         this.idChapter = idChapter;
         this.idTruyen = idTruyen;
         this.chuongSo = chuongSo;
         this.ngayPhatHanh = ngayPhatHanh;
-        this.anhTruyen = anhTruyen;
     }
 
     // Getter và Setter
@@ -46,14 +44,6 @@ public class ChuongTruyen {
 
     public void setNgayPhatHanh(String ngayPhatHanh) {
         this.ngayPhatHanh = ngayPhatHanh;
-    }
-
-    public String getAnhTruyen() {
-        return anhTruyen;
-    }
-
-    public void setAnhTruyen(String anhTruyen) {
-        this.anhTruyen = anhTruyen;
     }
 }
 

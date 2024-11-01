@@ -5,15 +5,20 @@ public class NguoiDung {
     private String tenUser;
     private String matKhau;
     private String soDienThoai;
+    private String email;
+    private int role;
 
-    public NguoiDung(String idUser, String tenUser, String matKhau, String soDienThoai, int role) {
+    // Constructor
+    public NguoiDung(String idUser, String tenUser, String matKhau, String soDienThoai, String email, int role) {
         this.idUser = idUser;
         this.tenUser = tenUser;
         this.matKhau = matKhau;
         this.soDienThoai = soDienThoai;
+        this.email = email;
+        this.role = role;
     }
 
-    // Getter và Setter
+    // Getters và Setters
     public String getIdUser() {
         return idUser;
     }
@@ -44,5 +49,21 @@ public class NguoiDung {
 
     public void setSoDienThoai(String soDienThoai) {
         this.soDienThoai = soDienThoai;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
     }
 }
