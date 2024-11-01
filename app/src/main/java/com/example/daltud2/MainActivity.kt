@@ -19,18 +19,18 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        addEvent();
-        addControl();
+//        addEvent();
+//        addControl();
     }
-    private fun addControl()
-    {
-        val button = findViewById<View>(R.id.button)
-    }
-    private fun addEvent()
-    {
-        findViewById<View>(R.id.button).setOnClickListener{
-            val intent = Intent(this,LoginActivity::class.java)
-            startActivity(intent)
-        }
-    }
+//    private fun addControl()
+//    {
+//        val button = findViewById<View>(R.id)
+//    }
+//    private fun addEvent()
+//    {
+//        findViewById<View>(R.id.button).setOnClickListener{
+//            val intent = Intent(this,LoginActivity::class.java)
+//            startActivity(intent)
+//        }
+//    }
 }
