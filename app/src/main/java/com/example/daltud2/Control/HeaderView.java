@@ -21,6 +21,9 @@ public class HeaderView extends LinearLayout {
     private HeaderListener listener;
     private boolean isNotWhite = true;
 
+    private ImageButton btnPopup;
+    private Button buttonHome;
+
     public HeaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
@@ -37,6 +40,9 @@ public class HeaderView extends LinearLayout {
         searchInput = (EditText) findViewById(R.id.search_input);
         searchComics = (Button)  findViewById(R.id.search_Comics);
         header = (LinearLayout) findViewById(R.id.header);
+
+        btnPopup = (ImageButton) findViewById(R.id.btnPopup);
+        buttonHome = (Button) findViewById(R.id.buttonHome);
 
 
         searchButton.setOnClickListener(view -> {
@@ -94,12 +100,25 @@ public class HeaderView extends LinearLayout {
                 listener.onUIChangeRequested();
             }
         });
+
+        buttonHome.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onHomeButtonClicked();
+            }
+        });
+
+        btnPopup.setOnClickListener(view -> {
+            if (listener != null) {
+                listener.onPopUpMenu();
+            }
+        });
     }
 
     // Thiết lập interface để giao tiếp với Activity
     public void setHeaderListener(HeaderListener listener) {
         this.listener = listener;
     }
+
 
 
     // Interface để định nghĩa các sự kiện
@@ -109,6 +128,8 @@ public class HeaderView extends LinearLayout {
         void onLoginButtonClicked();
         void onRegisterButtonClicked();
         void onSearchComicsClicked(String query);
+        void onHomeButtonClicked();
+        void onPopUpMenu();
     }
 
 

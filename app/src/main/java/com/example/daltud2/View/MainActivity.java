@@ -121,14 +121,15 @@ public class MainActivity extends AppCompatActivity implements HeaderView.Header
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         ListComic.setLayoutManager(gridLayoutManager);
         ListComic.setAdapter(adapter);
-    //Mở trang login
-    btnLogin.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-            startActivity(intent);
-        }
-    });
+
+        //Mở trang login
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
 
     //Mở trang Register
     btnRegister.setOnClickListener(new View.OnClickListener() {
@@ -138,12 +139,6 @@ public class MainActivity extends AppCompatActivity implements HeaderView.Header
             startActivity(intent);
         }
     });
-
-    // Khởi tạo Adapter với dữ liệu của trang đầu tiên
-    adapter = new ComicAdapter(pageDataList.get(currentPage-1));
-    GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-    ListComic.setLayoutManager(gridLayoutManager);
-    ListComic.setAdapter(adapter);
 
     //List truyện và nút điều hướng
         createPageNumbers();
@@ -177,6 +172,8 @@ public class MainActivity extends AppCompatActivity implements HeaderView.Header
         searchBar = findViewById(R.id.search_bar);
         searchButton = findViewById(R.id.search_button);
         mainLayout = findViewById(R.id.main);
+        btnLogin = findViewById(R.id.btnDN);
+        btnRegister = findViewById(R.id.btnDK);
         btnPopup = findViewById(R.id.btnPopup);
         btnBackwardStep = findViewById(R.id.btnBackwardStep);
         btnForwardStep = findViewById(R.id.btnForwardStep);
@@ -335,5 +332,24 @@ public class MainActivity extends AppCompatActivity implements HeaderView.Header
     @Override
     public void onSearchComicsClicked(String query) {
     }
+
+    @Override
+    public void onHomeButtonClicked() {
+        // Xử lý khi người dùng nhấn nút Home
+    }
+
+    @Override
+    public void onPopUpMenu() {
+        // Xử lý khi người dùng nhấn nút Popup
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, findViewById(R.id.btnPopup));
+        popupMenu.getMenuInflater().inflate(R.menu.menu_item, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(menuItem -> {
+            Intent intent = new Intent(MainActivity.this, searchTheLoai.class);
+            startActivity(intent);
+            return true;
+        });
+        popupMenu.show();
+    }
+
     //endregion
 }
