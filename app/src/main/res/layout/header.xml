@@ -110,8 +110,4 @@
             app:srcCompat="@mipmap/popupmenu" />
 
     </LinearLayout>
-
-
-
-
 </LinearLayout>

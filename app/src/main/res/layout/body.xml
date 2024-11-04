@@ -1,0 +1,86 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/body"
+    android:background="#1C1C1E">
+
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_comics"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_large"
+        android:textStyle="bold|italic"
+        android:padding="@dimen/padding_small" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/ListComic"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_weight="1" />
+
+    <!-- Dòng điều hướng trang -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="@dimen/padding_small">
+
+        <ImageButton
+            android:id="@+id/btnBackwardFast"
+            android:layout_width="@dimen/button_nav_width"
+            android:layout_height="@dimen/button_nav_height"
+            android:background="@android:color/transparent"
+            app:srcCompat="@mipmap/backwardfast"
+            app:tint="@color/white"
+            android:contentDescription="First Page" />
+
+        <ImageButton
+            android:id="@+id/btnBackwardStep"
+            android:layout_width="@dimen/button_nav_width"
+            android:layout_height="@dimen/button_nav_height"
+            android:background="@android:color/transparent"
+            app:srcCompat="@mipmap/backwardstep"
+            app:tint="@color/white"
+            android:contentDescription="Previous Page" />
+
+        <!-- HorizontalScrollView cho số trang -->
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scrollbars="none"
+            android:fillViewport="true"
+            android:paddingHorizontal="@dimen/padding_small">
+
+            <LinearLayout
+                android:id="@+id/pageNumbersLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center" />
+        </HorizontalScrollView>
+
+        <ImageButton
+            android:id="@+id/btnForwardStep"
+            android:layout_width="@dimen/button_nav_width"
+            android:layout_height="@dimen/button_nav_height"
+            android:background="@android:color/transparent"
+            app:srcCompat="@mipmap/forwardstep"
+            app:tint="@color/white"
+            android:contentDescription="Next Page" />
+
+        <ImageButton
+            android:id="@+id/btnForwardFast"
+            android:layout_width="@dimen/button_nav_width"
+            android:layout_height="@dimen/button_nav_height"
+            android:background="@android:color/transparent"
+            app:srcCompat="@mipmap/forwardfast"
+            app:tint="@color/white"
+            android:contentDescription="Last Page" />
+    </LinearLayout>
+</LinearLayout>

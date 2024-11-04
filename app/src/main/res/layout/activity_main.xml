@@ -1,143 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/activity_main_scene"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    android:id="@+id/main">
 
-    <!-- NestedScrollView với LinearLayout chứa nội dung chính -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/main"
+
+    <!-- HeaderView -->
+    <com.example.daltud2.Control.HeaderView
+        android:id="@+id/headerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorBackground"
-        android:orientation="vertical">
+        android:layout_height="wrap_content" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- HeaderView được đưa vào từ tài nguyên -->
-            <com.example.daltud2.Control.HeaderView
-                android:id="@+id/headerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+    <!-- BodyView -->
+    <com.example.daltud2.Control.bodyView
+        android:id="@+id/ViewBody"
+        android:layout_width="match_parent"
+        android:layout_height="700dp" />
 
 
+</LinearLayout>
 
-
-            <!-- Nội dung chính với tiêu đề và RecyclerView -->
-            <LinearLayout
-                android:id="@+id/body"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@color/colorBackground">
-
-                <TextView
-                    android:id="@+id/textViewTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/title_comics"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_large"
-                    android:textStyle="bold|italic" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/ListComic"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
-                <!-- Điều hướng trang trong LinearLayout -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:padding="@dimen/padding_small"
-                    android:background="@android:color/transparent">
-
-                    <ImageButton
-                        android:id="@+id/btnBackwardFast"
-                        android:layout_width="@dimen/button_nav_width"
-                        android:layout_height="@dimen/button_nav_height"
-                        android:visibility="gone"
-                        app:srcCompat="@mipmap/backwardfast"
-                        app:tint="@color/white"
-                        android:background="@android:color/transparent"/>
-
-                    <ImageButton
-                        android:id="@+id/btnBackwardStep"
-                        android:layout_width="@dimen/button_nav_width"
-                        android:layout_height="@dimen/button_nav_height"
-                        android:visibility="gone"
-                        app:srcCompat="@mipmap/backwardstep"
-                        app:tint="@color/white"
-                        android:background="@android:color/transparent"/>
-
-                    <LinearLayout
-                        android:id="@+id/pageNumbersLayout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:orientation="horizontal"
-                        android:layout_marginStart="@dimen/margin_small"
-                        android:layout_marginEnd="@dimen/margin_small" />
-
-                    <ImageButton
-                        android:id="@+id/btnForwardStep"
-                        android:layout_width="@dimen/button_nav_width"
-                        android:layout_height="@dimen/button_nav_height"
-                        app:srcCompat="@mipmap/forwardstep"
-                        app:tint="@color/white"
-                        android:background="@android:color/transparent"/>
-
-                    <ImageButton
-                        android:id="@+id/btnForwardFast"
-                        android:layout_width="@dimen/button_nav_width"
-                        android:layout_height="@dimen/button_nav_height"
-                        app:srcCompat="@mipmap/forwardfast"
-                        app:tint="@color/white"
-                        android:background="@android:color/transparent"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Footer -->
-            <LinearLayout
-                android:id="@+id/footer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textViewFooter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/footer_text"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </androidx.core.widget.NestedScrollView>
-
-    <!-- Nút quay về đầu trang -->
-    <Button
-        android:id="@+id/topButton"
-        android:layout_width="@dimen/top_button_size"
-        android:layout_height="@dimen/top_button_size"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/margin_large"
-        android:background="@drawable/button_round"
-        android:text="@string/text_top_button"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_medium"
-        android:elevation="@dimen/elevation_high"
-        android:padding="@dimen/padding_small" />
-
-</FrameLayout>
