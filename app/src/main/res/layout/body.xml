@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/title_comics"
-        android:textColor="@color/white"
+        android:textColor="#FFC107"
         android:textSize="@dimen/text_large"
         android:textStyle="bold|italic"
         android:padding="@dimen/padding_small" />

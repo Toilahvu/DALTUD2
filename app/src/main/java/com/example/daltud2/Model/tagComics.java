@@ -25,4 +25,9 @@ public class tagComics {
         this.description = descriptionTag;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }

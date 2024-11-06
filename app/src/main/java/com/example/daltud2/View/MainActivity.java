@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
                      btnBackwardStep.setColorFilter(Color.BLACK);
                  }else {
                      ListComic.setBackgroundColor(Color.parseColor("#18191A"));
-                     tv4.setTextColor(Color.WHITE);
+                     tv4.setTextColor(Color.parseColor("#FFC107"));
                      body.setBackgroundColor(Color.parseColor("#18191A"));
                      btnForwardFast.setColorFilter(Color.WHITE);
                      btnBackwardFast.setColorFilter(Color.WHITE);

@@ -39,6 +39,7 @@ public class searchComicsByTag extends AppCompatActivity {
     private Spinner spinnerTag, spinnerSort;
     List<String> sortOptions = Arrays.asList("Mới nhất", "Cũ nhất", "Lượt xem giảm dần","Lượt xem tăng dần");
     private GenericCustomSpinnerAdapter tagComicsAdapter;
+    GenericCustomSpinnerAdapter<String> sortAdapter;
 
 
 
@@ -47,6 +48,9 @@ public class searchComicsByTag extends AppCompatActivity {
     private LinearLayout pageNumbersLayout;
     private LinearLayout  body;
     private RecyclerView ListComic;
+
+    private TextView tv_category;
+    private TextView tv_selected;
 
     private final List<List<Comic>> pageDataList = new ArrayList<>();
     private boolean isNotWhite = true;
@@ -67,7 +71,7 @@ public class searchComicsByTag extends AppCompatActivity {
         declareVal();
         tagComicsAdapter = new GenericCustomSpinnerAdapter(this,R.layout.item_selected,getListCategory());
         spinnerTag.setAdapter(tagComicsAdapter);
-        GenericCustomSpinnerAdapter<String> sortAdapter = new GenericCustomSpinnerAdapter<>(this, R.layout.item_selected, sortOptions);
+        sortAdapter = new GenericCustomSpinnerAdapter<>(this, R.layout.item_selected, sortOptions);
         spinnerSort.setAdapter(sortAdapter);
 
         createSampleData(400);
@@ -93,13 +97,13 @@ public class searchComicsByTag extends AppCompatActivity {
                 } else {
                     mainSearchByTag.setBackgroundColor(Color.parseColor("#18191A"));
                     bodyViewByTag.setBackgroundColor(Color.parseColor("#18191A"));
-                    tagTitle.setTextColor(Color.WHITE);
+                    tagTitle.setTextColor(Color.parseColor("#FFC107"));
                     tagDescription.setTextColor(Color.LTGRAY);
                     TagSpinnerLabel.setTextColor(Color.parseColor("#FFC107"));
                     SortSpinnerLabel.setTextColor(Color.parseColor("#FFC107"));
 
                     ListComic.setBackgroundColor(Color.parseColor("#18191A"));
-                    tv4.setTextColor(Color.WHITE);
+                    tv4.setTextColor(Color.parseColor("#FFC107"));
                     body.setBackgroundColor(Color.parseColor("#18191A"));
                     btnForwardFast.setColorFilter(Color.WHITE);
                     btnBackwardFast.setColorFilter(Color.WHITE);
@@ -107,6 +111,12 @@ public class searchComicsByTag extends AppCompatActivity {
                     btnBackwardStep.setColorFilter(Color.WHITE);
                 }
                 isNotWhite = !isNotWhite;
+
+                tagComicsAdapter.setTheme(isNotWhite);
+                sortAdapter.setTheme(isNotWhite);
+
+                spinnerTag.invalidate();
+                spinnerSort.invalidate();
             }
 
             @Override
@@ -182,7 +192,6 @@ public class searchComicsByTag extends AppCompatActivity {
 
 
     //region Methods
-
     private void declareVal() {
         mainSearchByTag = findViewById(R.id.main);
         headerView = findViewById(R.id.headerViewByTag);
@@ -194,7 +203,6 @@ public class searchComicsByTag extends AppCompatActivity {
         TagSpinnerLabel = findViewById(R.id.TagSpinnerLabel);
         SortSpinnerLabel = findViewById(R.id.SortSpinnerLabel);
 
-
         btnBackwardStep = findViewById(R.id.btnBackwardStep);
         btnForwardStep = findViewById(R.id.btnForwardStep);
         ListComic = findViewById(R.id.ListComic);
@@ -202,6 +210,7 @@ public class searchComicsByTag extends AppCompatActivity {
         body = findViewById(R.id.body);
         btnForwardFast = findViewById(R.id.btnForwardFast);
         btnBackwardFast = findViewById(R.id.btnBackwardFast);
+
     }
 
     private void createSampleData(int numItems) {

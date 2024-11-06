@@ -100,6 +100,6 @@
     <com.example.daltud2.Control.bodyView
         android:id="@+id/BodyViewByTag"
         android:layout_width="match_parent"
-        android:layout_height="510dp" />
+        android:layout_height="410dp" />
 
 </LinearLayout>
