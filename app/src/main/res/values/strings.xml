@@ -51,5 +51,6 @@
     <string name="desc_dropdown_option">dropdown option</string>
     <string name="text_top_button">↑</string>
     <string name="footer_text">Footer with member names and information</string>
+    <string name="SapXep">Sắp xếp</string>
 
 </resources>

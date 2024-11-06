@@ -2,10 +2,14 @@ package com.example.daltud2.View;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,12 +18,15 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.daltud2.Control.GenericCustomSpinnerAdapter;
 import com.example.daltud2.Control.HeaderView;
 import com.example.daltud2.Control.bodyView;
 import com.example.daltud2.Model.Comic;
+import com.example.daltud2.Model.tagComics;
 import com.example.daltud2.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class searchComicsByTag extends AppCompatActivity {
@@ -30,6 +37,10 @@ public class searchComicsByTag extends AppCompatActivity {
     private bodyView bodyViewByTag;
     private TextView tagTitle, tagDescription, TagSpinnerLabel, SortSpinnerLabel;
     private Spinner spinnerTag, spinnerSort;
+    List<String> sortOptions = Arrays.asList("Mới nhất", "Cũ nhất", "Lượt xem giảm dần","Lượt xem tăng dần");
+    private GenericCustomSpinnerAdapter tagComicsAdapter;
+
+
 
     private TextView previousPageNumber, tv4;
     private ImageButton btnBackwardStep, btnForwardStep, btnForwardFast, btnBackwardFast;
@@ -54,6 +65,11 @@ public class searchComicsByTag extends AppCompatActivity {
 
         // Initialize views
         declareVal();
+        tagComicsAdapter = new GenericCustomSpinnerAdapter(this,R.layout.item_selected,getListCategory());
+        spinnerTag.setAdapter(tagComicsAdapter);
+        GenericCustomSpinnerAdapter<String> sortAdapter = new GenericCustomSpinnerAdapter<>(this, R.layout.item_selected, sortOptions);
+        spinnerSort.setAdapter(sortAdapter);
+
         createSampleData(400);
 
         headerView.setHeaderListener(new HeaderView.HeaderListener() {
@@ -113,11 +129,57 @@ public class searchComicsByTag extends AppCompatActivity {
             }
         });
 
+        spinnerTag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                tagComics selectedTag = (tagComics) tagComicsAdapter.getItem(i);
+
+                if (selectedTag != null) {
+                    tagTitle.setText(selectedTag.getName());
+                    tagDescription.setText(selectedTag.getDescription());
+                    Toast.makeText(searchComicsByTag.this, selectedTag.getName(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
+                String selectedOption = sortOptions.get(i);
+                Toast.makeText(getApplicationContext(), selectedOption, Toast.LENGTH_SHORT).show();
+                if (selectedOption.equals("Mới nhất")) {
+                    /**
+                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có thời gian mới nhất
+                     */
+                } else if (selectedOption.equals("Cũ nhất")) {
+                    /**
+                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có thời gian cũ nhất
+                     */
+                } else if (selectedOption.equals("Lượt xem giảm dần")) {
+                    /**
+                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có view nhiều rồi giảm dần
+                     */
+                } else if (selectedOption.equals("Lượt xem tăng dần")) {
+                    /**
+                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có view ít nhất rồi tăng dần
+                     */
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
     }
 
-    /**
-     * làm thêm adapter spinner , là xong phần này
-     */
 
     //region Methods
 
@@ -125,12 +187,13 @@ public class searchComicsByTag extends AppCompatActivity {
         mainSearchByTag = findViewById(R.id.main);
         headerView = findViewById(R.id.headerViewByTag);
         bodyViewByTag = findViewById(R.id.BodyViewByTag);
-        tagTitle = findViewById(R.id.Tag);
+        tagTitle = findViewById(R.id.tv_Tag);
         tagDescription = findViewById(R.id.DescripTag);
         spinnerTag = findViewById(R.id.spinnerTag);
         spinnerSort = findViewById(R.id.spinnerSort);
         TagSpinnerLabel = findViewById(R.id.TagSpinnerLabel);
         SortSpinnerLabel = findViewById(R.id.SortSpinnerLabel);
+
 
         btnBackwardStep = findViewById(R.id.btnBackwardStep);
         btnForwardStep = findViewById(R.id.btnForwardStep);
@@ -155,6 +218,33 @@ public class searchComicsByTag extends AppCompatActivity {
             startIndex += pageSize;
         }
     }
+
+    private List<tagComics> getListCategory(){
+        List<tagComics> tagcomics = new ArrayList<>();
+        tagcomics.add(new tagComics("Action", "Thể loại này thường có nội dung về đánh nhau, bạo lực, hỗn loạn, với diễn biến nhanh"));
+        tagcomics.add(new tagComics("Adventure", "Thể loại này tập trung vào các chuyến phiêu lưu và thám hiểm."));
+        tagcomics.add(new tagComics("Anime", "Thể loại liên quan đến phong cách hoạt hình Nhật Bản."));
+        tagcomics.add(new tagComics("Chuyển Sinh", "Thể loại mà nhân vật chính được chuyển sinh hoặc tái sinh sang thế giới khác."));
+        tagcomics.add(new tagComics("Cổ Đại", "Thể loại lấy bối cảnh trong thời kỳ lịch sử xa xưa."));
+        tagcomics.add(new tagComics("Comedy", "Thể loại hài hước với nội dung nhẹ nhàng và gây cười."));
+        tagcomics.add(new tagComics("Comic", "Thể loại truyện tranh tổng hợp từ nhiều chủ đề khác nhau."));
+        tagcomics.add(new tagComics("Demons", "Thể loại liên quan đến quỷ và các sinh vật siêu nhiên."));
+        tagcomics.add(new tagComics("Detective", "Thể loại truyện điều tra, phá án và các vụ án bí ẩn."));
+        tagcomics.add(new tagComics("Doujinshi", "Thể loại truyện tự sáng tác của người hâm mộ dựa trên các tác phẩm gốc."));
+        tagcomics.add(new tagComics("Drama", "Thể loại truyện với tình tiết kịch tính và cảm xúc."));
+        tagcomics.add(new tagComics("Fantasy", "Thể loại viễn tưởng, thường có yếu tố phép thuật hoặc thế giới kỳ ảo."));
+        tagcomics.add(new tagComics("Gender Bender", "Thể loại nhân vật chính bị thay đổi giới tính."));
+        tagcomics.add(new tagComics("Harem", "Thể loại mà nhân vật chính được bao quanh bởi nhiều người yêu hoặc người hâm mộ."));
+        tagcomics.add(new tagComics("Historical", "Thể loại lấy bối cảnh trong một thời kỳ lịch sử nhất định."));
+        tagcomics.add(new tagComics("Horror", "Thể loại kinh dị, tập trung vào yếu tố sợ hãi và rùng rợn."));
+        tagcomics.add(new tagComics("Huyền Huyễn", "Thể loại viễn tưởng kỳ ảo, thường xuất hiện trong các câu chuyện Trung Quốc."));
+        tagcomics.add(new tagComics("Isekai", "Thể loại chuyển sinh sang thế giới khác hoặc song song."));
+        tagcomics.add(new tagComics("Josei", "Thể loại dành cho đối tượng nữ trưởng thành."));
+        tagcomics.add(new tagComics("Mafia", "Thể loại xoay quanh thế giới ngầm và các tổ chức tội phạm."));
+
+        return tagcomics;
+    }
+
 
     //endregion
 

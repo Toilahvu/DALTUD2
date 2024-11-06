@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1C1C1E"
+    tools:context=".View.searchComicsByTag"
+    android:orientation="vertical">
+
+    <!-- HeaderView từ tài nguyên -->
+    <com.example.daltud2.Control.HeaderView
+        android:id="@+id/headerViewByTag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- TextView cho tên Tag -->
+    <TextView
+        android:id="@+id/tv_Tag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_small"
+        android:text="Action"
+        android:textSize="@dimen/text_large"
+        android:textColor="#FFC107"
+        android:textStyle="bold"
+        android:padding="@dimen/padding_small" />
+
+    <TextView
+        android:id="@+id/SortRankpinnerLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/SapXep"
+        android:textColor="#FFC107"
+        android:textSize="@dimen/text_medium"
+        android:textStyle="bold"
+        android:layout_marginStart="@dimen/fab_margin"/>
+
+    <Spinner
+        android:id="@+id/spinnerSortRank"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@android:color/transparent" />
+
+
+    <com.example.daltud2.Control.bodyView
+        android:id="@+id/BodyViewByTag"
+        android:layout_width="match_parent"
+        android:layout_height="510dp" />
+
+
+
+</LinearLayout>

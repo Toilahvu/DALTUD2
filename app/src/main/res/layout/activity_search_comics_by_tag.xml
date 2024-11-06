@@ -9,100 +9,97 @@
     tools:context=".View.searchComicsByTag"
     android:orientation="vertical">
 
-            <!-- HeaderView được đưa vào từ tài nguyên -->
-            <com.example.daltud2.Control.HeaderView
-                android:id="@+id/headerViewByTag"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+    <!-- HeaderView từ tài nguyên -->
+    <com.example.daltud2.Control.HeaderView
+        android:id="@+id/headerViewByTag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
-            <!-- TextView cho tên Tag -->
+    <!-- TextView cho tên Tag -->
+    <TextView
+        android:id="@+id/tv_Tag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_small"
+        android:text="Action"
+        android:textSize="@dimen/text_large"
+        android:textColor="#FFC107"
+        android:textStyle="bold"
+        android:padding="@dimen/padding_small" />
+
+    <!-- TextView cho mô tả thể loại -->
+    <TextView
+        android:id="@+id/DescripTag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/padding_small"
+        android:text="Thể loại này thường có nội dung về đánh nhau, bạo lực, hỗn loạn, với diễn biến nhanh."
+        android:textColor="#B0BEC5"
+        android:textSize="@dimen/text_medium"
+        android:padding="@dimen/padding_small" />
+
+    <!-- Khu vực chọn Thể loại truyện và Sắp xếp -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/fab_margin">
+
+        <!-- Thể loại truyện -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/margin_large">
+
             <TextView
-                android:id="@+id/Tag"
-                android:layout_width="match_parent"
+                android:id="@+id/TagSpinnerLabel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Truyện Action"
-                android:textSize="22sp"
+                android:text="Thể loại truyện"
                 android:textColor="#FFC107"
+                android:textSize="@dimen/text_medium"
                 android:textStyle="bold"
-                android:padding="8dp" />
-            <!-- TextView cho mô tả thể loại -->
+                android:layout_marginEnd="@dimen/padding_small" />
+
+            <Spinner
+                android:id="@+id/spinnerTag"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <!-- Sắp xếp tìm theo thời gian -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
             <TextView
-                android:id="@+id/DescripTag"
-                android:layout_width="match_parent"
+                android:id="@+id/SortSpinnerLabel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Thể loại này thường có nội dung về đánh nhau, bạo lực, hỗn loạn, với diễn biến nhanh."
-                android:textColor="#B0BEC5"
-                android:textSize="14sp"
-                android:padding="8dp" />
-            <!-- Khu vực chọn Thể loại truyện và Sắp xếp -->
-            <LinearLayout
-                android:layout_width="match_parent"
+                android:text="@string/SapXep"
+                android:textColor="#FFC107"
+                android:textSize="@dimen/text_medium"
+                android:textStyle="bold"
+                android:layout_marginEnd="@dimen/padding_small" />
+
+            <Spinner
+                android:id="@+id/spinnerSort"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_weight="1"
+                android:background="@android:color/transparent" />
+        </LinearLayout>
+    </LinearLayout>
 
-                android:padding="16dp">
-
-                <!-- Thể loại truyện -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="12dp">
-
-                    <TextView
-                        android:id="@+id/TagSpinnerLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Thể loại truyện"
-                        android:textColor="#FFC107"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_marginEnd="8dp" />
-
-                    <Spinner
-                        android:id="@+id/spinnerTag"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
-
-                </LinearLayout>
-
-                <!-- Sắp xếp -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
-
-                    <TextView
-                        android:id="@+id/SortSpinnerLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Sắp xếp"
-                        android:textColor="#FFC107"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:layout_marginEnd="8dp" />
-
-                    <Spinner
-                        android:id="@+id/spinnerSort"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <com.example.daltud2.Control.bodyView
-                android:id="@+id/BodyViewByTag"
-                android:layout_width="match_parent"
-                android:layout_height="510dp" />
+    <com.example.daltud2.Control.bodyView
+        android:id="@+id/BodyViewByTag"
+        android:layout_width="match_parent"
+        android:layout_height="510dp" />
 
 </LinearLayout>
-
-
-
-
