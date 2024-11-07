@@ -59,9 +59,6 @@ public class HeaderView extends LinearLayout {
         header = (LinearLayout) findViewById(R.id.header);
 
 
-
-
-
         searchButton.setOnClickListener(view -> {
             if (searchBar.getVisibility() == View.GONE) {
                 searchBar.setVisibility(View.VISIBLE);
