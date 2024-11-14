@@ -25,5 +25,10 @@ public class Address {
     public void setMoTaTag(String moTaTag) {
         this.moTaTag = moTaTag;
     }
+
+    @Override
+    public String toString() {
+        return tenTag;
+    }
 }
 

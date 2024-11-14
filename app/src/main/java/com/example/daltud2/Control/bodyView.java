@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daltud2.Model.Comic;
+import com.example.daltud2.Model.Truyen;
 import com.example.daltud2.R;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class bodyView extends LinearLayout {
     private LinearLayout pageNumbersLayout;
     private RecyclerView ListComic;
     private int currentPage = 1;
-    private List<List<Comic>> pageDataList = new ArrayList<>();  // Initialize with empty list
+    private List<List<Truyen>> pageDataList = new ArrayList<>();  // Initialize with empty list
     private int maxPages;
     private ComicAdapter adapter;
     private dataProvide provider;
@@ -37,7 +38,7 @@ public class bodyView extends LinearLayout {
     }
 
     public interface dataProvide {
-        List<List<Comic>> getPageDataList();
+        List<List<Truyen>> getPageDataList();
     }
 
     public void setDataProvider(dataProvide provider) {

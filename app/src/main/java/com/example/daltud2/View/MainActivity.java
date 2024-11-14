@@ -41,6 +41,7 @@ import com.example.daltud2.RegisterActivity;
 import android.animation.ObjectAnimator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private ComicAdapter adapter;
     private HeaderView headerView;
     private bodyView bodyViewInstance;
-    private final List<List<Comic>> pageDataList = new ArrayList<>();
+    private final List<List<Truyen>> pageDataList = new ArrayList<>();
+    private List<Truyen> truyenList = new ArrayList<>();
     private DataBaseSQLLite dataBaseSQLLite;
 
     private TextView previousPageNumber, tv4;
@@ -63,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -78,10 +78,8 @@ public class MainActivity extends AppCompatActivity {
         dataBaseSQLLite = new DataBaseSQLLite(this);
         //endregion
 
-        //region Database Initialization
-        getAllruyen();
-        createSampleData(200);
-        //endregion
+
+        createSampleData(20);
 
         headerView.setHeaderListener(new HeaderView.HeaderListener() {
              @Override
@@ -121,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
         bodyViewInstance.setDataProvider(new bodyView.dataProvide() {
             @Override
-            public List<List<Comic>> getPageDataList() {
+            public List<List<Truyen>> getPageDataList() {
                 return pageDataList;
             }
         });
@@ -143,41 +141,44 @@ public class MainActivity extends AppCompatActivity {
     //endregion
 
     //region Database
-
-    /**
-     * Huy Nhắn Chinh,
-     *getAllTruyen  = createSampleData(int numItems)
-     *giờ làm sao để getAllTruyen nó return  cái pageDataList  hàm là được,
-     *sau này khi click vào thì intent tất cả dữ liệu sang trang đọc truyện thôi
-     */
-
     private void getAllruyen() {
         if (dataBaseSQLLite == null) {
             dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
         }
         Cursor cursor = dataBaseSQLLite.getAllTruyen(dataBaseSQLLite.getReadableDatabase());
         if (cursor != null) {
-            List<Truyen> truyenList = new ArrayList<>();
+            truyenList.clear();
             while (cursor.moveToNext()) {
+                @SuppressLint("Range") String idTruyen = cursor.getString(cursor.getColumnIndex("idTruyen"));
                 @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
-                truyenList.add(new Truyen(tenTruyen));
-                Log.d("Ten truyen", "Name: " + tenTruyen);
+                @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
+                @SuppressLint("Range") int luotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
+                @SuppressLint("Range") int luotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
+                @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+                @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
+                @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
+
+                truyenList.add(new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia));
             }
             cursor.close();
             Log.d("Truyen Count", "Total Truyen: " + truyenList.size());
         }
     }
+
+    private void sortTimeComics() {
+        truyenList.sort((truyen1, truyen2) -> truyen2.getNgayPhatHanh().compareTo(truyen1.getNgayPhatHanh()));
+        Log.d("SortTimeComics", "Danh sách đã được sắp xếp theo thời gian.");
+    }
+
     private void createSampleData(int numItems) {
-        List<Comic> fullDataList = new ArrayList<>();
-        for (int i = 1; i <= numItems; i++) {
-            fullDataList.add(new Comic("Comic " + i, 0));
-        }
+        getAllruyen();
+        sortTimeComics();
         pageDataList.clear();
         int startIndex = 0;
-        while (startIndex < fullDataList.size()) {
+        while (startIndex < truyenList.size()) {
             int pageSize = 20;
-            int endIndex = Math.min(startIndex + pageSize, fullDataList.size());
-            pageDataList.add(new ArrayList<>(fullDataList.subList(startIndex, endIndex)));
+            int endIndex = Math.min(startIndex + pageSize, truyenList.size());
+            pageDataList.add(new ArrayList<>(truyenList.subList(startIndex, endIndex)));
             startIndex += pageSize;
         }
     }

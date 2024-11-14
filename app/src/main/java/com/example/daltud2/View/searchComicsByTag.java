@@ -1,7 +1,10 @@
 package com.example.daltud2.View;
 
+import android.annotation.SuppressLint;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,10 +21,12 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.daltud2.Control.DataBaseSQLLite;
 import com.example.daltud2.Control.GenericCustomSpinnerAdapter;
 import com.example.daltud2.Control.HeaderView;
 import com.example.daltud2.Control.bodyView;
 import com.example.daltud2.Model.Comic;
+import com.example.daltud2.Model.Truyen;
 import com.example.daltud2.Model.tagComics;
 import com.example.daltud2.R;
 
@@ -52,7 +57,10 @@ public class searchComicsByTag extends AppCompatActivity {
     private TextView tv_category;
     private TextView tv_selected;
 
-    private final List<List<Comic>> pageDataList = new ArrayList<>();
+    private DataBaseSQLLite dataBaseSQLLite;
+
+    private final List<List<Truyen>> pageDataList = new ArrayList<>();
+    private List<Truyen> truyenList = new ArrayList<>();
     private boolean isNotWhite = true;
     //endregion
     @Override
@@ -73,8 +81,6 @@ public class searchComicsByTag extends AppCompatActivity {
         spinnerTag.setAdapter(tagComicsAdapter);
         sortAdapter = new GenericCustomSpinnerAdapter<>(this, R.layout.item_selected, sortOptions);
         spinnerSort.setAdapter(sortAdapter);
-
-        createSampleData(400);
 
         headerView.setHeaderListener(new HeaderView.HeaderListener() {
             @Override
@@ -134,7 +140,7 @@ public class searchComicsByTag extends AppCompatActivity {
 
         bodyViewByTag.setDataProvider(new bodyView.dataProvide() {
             @Override
-            public List<List<Comic>> getPageDataList() {
+            public List<List<Truyen>> getPageDataList() {
                 return pageDataList;
             }
         });
@@ -149,6 +155,8 @@ public class searchComicsByTag extends AppCompatActivity {
                     tagDescription.setText(selectedTag.getDescription());
                     Toast.makeText(searchComicsByTag.this, selectedTag.getName(), Toast.LENGTH_SHORT).show();
                 }
+
+                getComicTag(selectedTag.getName());
             }
 
             @Override
@@ -213,17 +221,66 @@ public class searchComicsByTag extends AppCompatActivity {
 
     }
 
-    private void createSampleData(int numItems) {
-        List<Comic> fullDataList = new ArrayList<>();
-        for (int i = 1; i <= numItems; i++) {
-            fullDataList.add(new Comic("Comic " + i, 0));
+    private void getComicTag(String tag){
+        // lấy dữ liệu rồi tìm thông qua searchText
+        if (dataBaseSQLLite == null) {
+            dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
         }
+
+        Cursor cursor = dataBaseSQLLite.searchComicsByTag(dataBaseSQLLite.getReadableDatabase(),tag);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                @SuppressLint("Range") String idTruyen = cursor.getString(cursor.getColumnIndex("idTruyen"));
+                @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
+                @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
+                @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+                @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
+                @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
+
+                truyenList.add(new Truyen(idTruyen,tenTruyen,tenTacGia,ngayPhatHanh,moTaTruyen,urlAnhBia));
+                Log.d("Ten truyen", "Name: " + tenTruyen);
+                Log.d("Ten truyen", "Name: " + tenTacGia);
+            }
+            cursor.close();
+            Log.d("Truyen Count", "Total Truyen: " + truyenList.size());
+        }
+    }
+
+    private void sortComicsBy(String type){
+        // Sắp xếp dựa trên tiêu chí
+        switch (type) {
+            case "Mới nhất":
+                truyenList.sort((truyen1, truyen2) -> truyen2.getNgayPhatHanh().compareTo(truyen1.getNgayPhatHanh()));
+                break;
+
+            case "Cũ nhất":
+                truyenList.sort((truyen1, truyen2) -> truyen1.getNgayPhatHanh().compareTo(truyen2.getNgayPhatHanh()));
+                break;
+
+            case "Lượt xem giảm dần":
+                truyenList.sort((truyen1, truyen2) -> Integer.compare(truyen2.getSoLuotXem(), truyen1.getSoLuotXem()));
+                break;
+
+            case "Lượt xem tăng dần":
+                truyenList.sort((truyen1, truyen2) -> Integer.compare(truyen1.getSoLuotTheoDoi(), truyen2.getSoLuotTheoDoi()));
+                break;
+
+            default:
+                Log.d("SortComicsBy", "Tiêu chí sắp xếp không hợp lệ: " + type);
+                return;
+        }
+
+        createSampleData(20);
+        ListComic.getAdapter().notifyDataSetChanged();
+    }
+
+    private void createSampleData(int numItems) {
         pageDataList.clear();
         int startIndex = 0;
-        while (startIndex < fullDataList.size()) {
+        while (startIndex < truyenList.size()) {
             int pageSize = 20;
-            int endIndex = Math.min(startIndex + pageSize, fullDataList.size());
-            pageDataList.add(new ArrayList<>(fullDataList.subList(startIndex, endIndex)));
+            int endIndex = Math.min(startIndex + pageSize, truyenList.size());
+            pageDataList.add(new ArrayList<>(truyenList.subList(startIndex, endIndex)));
             startIndex += pageSize;
         }
     }

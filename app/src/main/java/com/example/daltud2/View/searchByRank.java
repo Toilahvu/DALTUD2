@@ -20,6 +20,7 @@ import com.example.daltud2.Control.GenericCustomSpinnerAdapter;
 import com.example.daltud2.Control.HeaderView;
 import com.example.daltud2.Control.bodyView;
 import com.example.daltud2.Model.Comic;
+import com.example.daltud2.Model.Truyen;
 import com.example.daltud2.R;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ public class searchByRank extends AppCompatActivity {
     private LinearLayout  body;
     private RecyclerView ListComic;
 
-    private final List<List<Comic>> pageDataList = new ArrayList<>();
+    private final List<List<Truyen>> pageDataList = new ArrayList<>();
     private  int numItems = 1000;
     List<String> sortRank = Arrays.asList("Top Ngày", "Top Tuần", "Top Tháng");
     private GenericCustomSpinnerAdapter rankComicsAdapter;
@@ -62,7 +63,7 @@ public class searchByRank extends AppCompatActivity {
         });
 
         declareVal();
-        createSampleData(numItems);
+        //createSampleData(numItems);
         rankComicsAdapter = new GenericCustomSpinnerAdapter(this,R.layout.item_selected,sortRank);
         sortRankpinner.setAdapter(rankComicsAdapter);
 
@@ -119,7 +120,7 @@ public class searchByRank extends AppCompatActivity {
 
         bodyView.setDataProvider(new bodyView.dataProvide() {
             @Override
-            public List<List<Comic>> getPageDataList() {
+            public List<List<Truyen>> getPageDataList() {
                 return pageDataList;
             }
         });
@@ -169,6 +170,7 @@ public class searchByRank extends AppCompatActivity {
         btnBackwardFast = findViewById(R.id.btnBackwardFast);
     }
 
+    /*
     private void createSampleData(int numItems) {
         List<Comic> fullDataList = new ArrayList<>();
         for (int i = 1; i <= numItems; i++) {
@@ -183,5 +185,8 @@ public class searchByRank extends AppCompatActivity {
             startIndex += pageSize;
         }
     }
+
+    */
+
     //endregion
 }

@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,13 +25,14 @@ import com.example.daltud2.R;
 import com.example.daltud2.RegisterActivity;
 import com.example.daltud2.View.MainActivity;
 import com.example.daltud2.View.searchByRank;
+import com.example.daltud2.View.searchComics;
 import com.example.daltud2.View.searchComicsByTag;
 
 public class HeaderView extends LinearLayout {
 
     private LinearLayout header,searchBar;
     private ImageButton btnChange, logoQQ, searchButton;
-    private Button btnDK, btnDN, searchComics;
+    private Button btnDK, btnDN, searchComic;
     private EditText searchInput;
     private HeaderListener listener;
     private boolean isNotWhite = true;
@@ -48,6 +51,7 @@ public class HeaderView extends LinearLayout {
         LayoutInflater.from(context).inflate(R.layout.header, this, true);
 
         btnChange = (ImageButton) findViewById(R.id.btnChange);
+        searchBar = (LinearLayout) findViewById(R.id.search_bar);
         logoQQ = (ImageButton) findViewById(R.id.logoQQ);
         btnPopup = (ImageButton) findViewById(R.id.btnPopup);
         buttonHome = (Button) findViewById(R.id.buttonHome);
@@ -55,7 +59,7 @@ public class HeaderView extends LinearLayout {
         btnDK = (Button) findViewById(R.id.btnDK);
         btnDN = (Button) findViewById(R.id.btnDN);
         searchInput = (EditText) findViewById(R.id.search_input);
-        searchComics = (Button)  findViewById(R.id.search_Comics);
+        searchComic = (Button)  findViewById(R.id.search_Comics);
         header = (LinearLayout) findViewById(R.id.header);
 
 
@@ -90,9 +94,18 @@ public class HeaderView extends LinearLayout {
             }
         });
 
-        searchComics.setOnClickListener(new OnClickListener() {
+        searchComic.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                String searchText = searchInput.getText().toString();
+                if (TextUtils.isEmpty(searchText)) {
+                    Toast.makeText(getContext(), "Vui lòng nhập nội dung tìm kiếm", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent Comic = new Intent(getContext(), searchComics.class);
+                    Comic.putExtra("comicSearch", searchText);
+                    getContext().startActivity(Comic);
+                }
+
                 if (listener != null) {
                     listener.onSearchComicsClicked(searchInput.getText().toString());
                 }
@@ -108,7 +121,6 @@ public class HeaderView extends LinearLayout {
                 btnChange.setBackground(null);
                 searchButton.setBackground(null);
                 logoQQ.setImageResource(R.mipmap.logoday);
-
 
             } else {
                 //setBackgroundColor(Color.BLACK);

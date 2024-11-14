@@ -16,7 +16,7 @@ import java.io.File;
 
 public class DataBaseSQLLite extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "webDocTruyen";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Constructor có tham số tên cơ sở dữ liệu
     public DataBaseSQLLite(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -55,6 +55,8 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 "idTruyen VARCHAR(50) PRIMARY KEY," +
                 "tenTruyen VARCHAR(255) NOT NULL," +
                 "tenTacGia VARCHAR(255)," +
+                "luotXem INT,"+
+                "luotTheoDoi,"+
                 "ngayPhatHanh DATE," +
                 "moTaTruyen TEXT," +
                 "urlAnhBia VARCHAR(255)" +
@@ -114,7 +116,7 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 "idUser VARCHAR(50)," +
                 "idTruyen VARCHAR(50)," +
                 "ngayBatDau DATE," +
-                "trangThaiTheoDoi TINYINT," +  // 1: đang theo dõi, 0: đã hủy theo dõi
+                "trangThaiTheoDoi TINYINT," +  // 1: đang theo dõi, 0: không theo dõi
                 "PRIMARY KEY (idUser, idTruyen)," +
                 "FOREIGN KEY (idUser) REFERENCES nguoi_dung(idUser)," +
                 "FOREIGN KEY (idTruyen) REFERENCES truyen(idTruyen)" +
@@ -173,20 +175,27 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
 
             // Chèn dữ liệu vào bảng truyen
             if (BangTrongko(db, "truyen")) {
-                String insertTruyen = "INSERT INTO truyen (idTruyen, tenTruyen, tenTacGia, ngayPhatHanh, moTaTruyen, urlAnhBia) VALUES " +
-                        "('truyen01', 'Ta là tà đế', 'Đang cập nhật', '2019-11-13', 'Truyện tranh Ta Là Tà Đế được cập nhật nhanh và đầy đủ nhất tại TruyenQQ. Bạn đọc đừng quên để lại bình luận và chia sẻ, ủng hộ TruyenQQ ra các chương mới nhất của truyện Ta Là Tà Đế.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/ta-la-ta-de.jpg'), " +
-                        "('truyen02', 'Lăng tiên kỳ đàm', 'Đang cập nhật', '2021-05-09', 'Nhân vật chính xuyên qua thành một con hổ, sống cuộc sống yên bình êm ả của một sơn quân, chủ nhân của ngọn núi Baek. Bỗng một ngày xuất hiểu tiểu cô nương nhận sơn quân là tướng công, những chuyện rắc rối và ký lạ cũng từ đó bắt đầu....', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/ta-la-ta-de.jpg')";
+                String insertTruyen = "INSERT INTO truyen (idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia) VALUES " +
+                        "('truyen01', 'Ta là tà đế', 'Nguyễn Văn A', 500, 100, '2019-11-13', 'Truyện huyền huyễn về hành trình của nhân vật chính.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/ta-la-ta-de.jpg'), " +
+                        "('truyen02', 'Lăng tiên kỳ đàm', 'Lê Thị B', 300, 50, '2021-05-09', 'Một câu chuyện phiêu lưu thú vị.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/ta-la-ta-de.jpg'), " +
+                        "('truyen03', 'Cuộc chiến với yêu ma', 'Trần Văn C', 800, 200, '2020-08-21', 'Một câu chuyện về chiến đấu với yêu ma.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/ta-la-ta-de.jpg'), " +
+                        "('truyen04', 'Hành trình kỳ ảo', 'Phạm Thị D', 1000, 300, '2018-01-10', 'Hành trình khám phá thế giới mới đầy kỳ diệu.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/ta-la-ta-de.jpg');";
                 db.execSQL(insertTruyen);
             }
 
             // Chèn dữ liệu vào bảng chuong_truyen
             if (BangTrongko(db, "chuong_truyen")) {
                 String insertChuongTruyen = "INSERT INTO chuong_truyen (idChapter, idTruyen, chuongSo, ngayPhatHanh) VALUES " +
-                        "('Ta_La_Ta_De_Chap_0', 'truyen01', 1, '2019-11-13'), " +
-                        "('Lang_Tien_Ki_Dam_Chap_1', 'truyen02', 1, '2021-05-09')";
+                        "('truyen01_chap01', 'truyen01', 1, '2019-11-14'), " +
+                        "('truyen01_chap02', 'truyen01', 2, '2019-11-15'), " +
+                        "('truyen02_chap01', 'truyen02', 1, '2021-05-10'), " +
+                        "('truyen02_chap02', 'truyen02', 2, '2021-05-11'), " +
+                        "('truyen03_chap01', 'truyen03', 1, '2020-08-22'), " +
+                        "('truyen03_chap02', 'truyen03', 2, '2020-08-23'), " +
+                        "('truyen04_chap01', 'truyen04', 1, '2018-01-11'), " +
+                        "('truyen04_chap02', 'truyen04', 2, '2018-01-12');";
                 db.execSQL(insertChuongTruyen);
             }
-
             // Chèn dữ liệu vào bảng anh_chuong
             insertImagesIntoDB(this, db); // Gọi hàm chèn ảnh
 
@@ -277,14 +286,14 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
             // Chèn dữ liệu vào bảng truyen_address
             if (BangTrongko(db, "truyen_address")) {
                 String insertTruyenAddress = "INSERT INTO truyen_address (idTruyen, tenTag) VALUES " +
-                        "('truyen01', 'Supernatural'), " +
-                        "('truyen01', 'Manhua'), " +
-                        "('truyen01', 'Xuyên Không'), " +
-                        "('truyen01', 'Truyện Màu'), " +
+                        "('truyen01', 'Action'), " +
+                        "('truyen01', 'Fantasy'), " +
                         "('truyen02', 'Adventure'), " +
-                        "('truyen02', 'Action'), " +
-                        "('truyen02', 'Truyện Màu'), " +
-                        "('truyen02', 'Manhua')";
+                        "('truyen02', 'Comedy'), " +
+                        "('truyen03', 'Horror'), " +
+                        "('truyen03', 'Demons'), " +
+                        "('truyen04', 'Isekai'), " +
+                        "('truyen04', 'Magic');";
                 db.execSQL(insertTruyenAddress);
             }
 
@@ -351,6 +360,21 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         String query = "SELECT * FROM truyen";
         return db.rawQuery(query, null);
     }
+
+    //Select truyện có từ khoá giống
+    public Cursor searchComics(SQLiteDatabase db, String tv_comicSearch) {
+        String query = "SELECT * FROM truyen WHERE tenTruyen LIKE '%" + tv_comicSearch + "%' OR tenTacGia LIKE '%" + tv_comicSearch + "%'";
+        return db.rawQuery(query, null);
+    }
+
+    public Cursor searchComicsByTag(SQLiteDatabase db, String tv_Tag) {
+        String query = "SELECT t.* " +
+                "FROM truyen t " +
+                "INNER JOIN truyen_address ta ON t.idTruyen = ta.idTruyen " +
+                "WHERE ta.tenTag LIKE '%" + tv_Tag + "%' ";
+        return db.rawQuery(query, null);
+    }
+
 
     // select tài khoản
     public NguoiDung kiemTraTaiKhoanMatKhau(SQLiteDatabase db, String emaill, String password) {

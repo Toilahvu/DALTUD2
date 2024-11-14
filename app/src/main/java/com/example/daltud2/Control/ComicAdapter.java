@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daltud2.Model.Comic;
+import com.example.daltud2.Model.Truyen;
 import com.example.daltud2.R;
 
 import java.util.List;
@@ -26,9 +27,9 @@ public class ComicAdapter extends RecyclerView.Adapter<ComicAdapter.ComicViewHol
             comicImage = itemView.findViewById(R.id.comicImage);
         }
     }
-    private List<Comic> comicList;
+    private List<Truyen> comicList;
 
-    public ComicAdapter(List<Comic> comicList) {
+    public ComicAdapter(List<Truyen> comicList) {
         this.comicList = comicList;
     }
 
@@ -42,15 +43,15 @@ public class ComicAdapter extends RecyclerView.Adapter<ComicAdapter.ComicViewHol
 
     @Override
     public void onBindViewHolder(@NonNull ComicAdapter.ComicViewHolder holder, int position) {
-        Comic comic = comicList.get(position);
-        holder.comicTitle.setText(comic.title);
+        Truyen comic = comicList.get(position);
+        holder.comicTitle.setText(comic.getTenTruyen());
     }
 
     @Override
     public int getItemCount() {
         return comicList.size();
     }
-    public void updateData(List<Comic> newComicList) {
+    public void updateData(List<Truyen> newComicList) {
         this.comicList = newComicList;
         notifyDataSetChanged(); // Báo cho RecyclerView biết dữ liệu đã thay đổi
     }
