@@ -98,16 +98,12 @@ public class HeaderView extends LinearLayout {
             @Override
             public void onClick(View v) {
                 String searchText = searchInput.getText().toString();
-                if (TextUtils.isEmpty(searchText)) {
+                if (searchText.isEmpty()) {
                     Toast.makeText(getContext(), "Vui lòng nhập nội dung tìm kiếm", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent Comic = new Intent(getContext(), searchComics.class);
                     Comic.putExtra("comicSearch", searchText);
                     getContext().startActivity(Comic);
-                }
-
-                if (listener != null) {
-                    listener.onSearchComicsClicked(searchInput.getText().toString());
                 }
             }
         });
@@ -141,9 +137,8 @@ public class HeaderView extends LinearLayout {
         });
 
         buttonHome.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onHomeButtonClicked();
-            }
+            Intent main = new Intent(getContext(),MainActivity.class);
+            getContext().startActivity(main);
         });
 
         btnPopup.setOnClickListener(view -> {
@@ -175,6 +170,14 @@ public class HeaderView extends LinearLayout {
                 rotateBack.start();
             });
         });
+
+        logoQQ.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent main = new Intent(getContext(),MainActivity.class);
+                getContext().startActivity(main);
+            }
+        });
     }
 
     // Thiết lập interface để giao tiếp với Activity
@@ -186,8 +189,7 @@ public class HeaderView extends LinearLayout {
     public interface HeaderListener {
         void onUIChangeRequested();
         void onSearchButtonClicked();
-        void onSearchComicsClicked(String query);
-        void onHomeButtonClicked();
+        //void onSearchComicsClicked(String query);
     }
 
 

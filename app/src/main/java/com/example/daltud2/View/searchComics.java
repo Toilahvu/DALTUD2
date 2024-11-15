@@ -48,19 +48,22 @@ public class searchComics extends AppCompatActivity {
 
     private int numsItem = 20;
 
-    String searchQuery = getIntent().getStringExtra("comicSearch");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_search_comics);
+        String searchQuery = getIntent().getStringExtra("comicSearch");
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        declareVal();
+        getComicSearch(searchQuery);
         createPage(numsItem);
 
         headerView.setHeaderListener(new HeaderView.HeaderListener() {
@@ -97,15 +100,6 @@ public class searchComics extends AppCompatActivity {
             @Override
             public void onSearchButtonClicked() {
             }
-
-            @Override
-            public void onSearchComicsClicked(String query) {
-                getComicSearch(query);
-            }
-
-            @Override
-            public void onHomeButtonClicked() {
-            }
         });
 
         bodyViewByTag.setDataProvider(new bodyView.dataProvide() {
@@ -114,6 +108,8 @@ public class searchComics extends AppCompatActivity {
                 return pageDataList;
             }
         });
+
+
     }
 
     private void declareVal() {
@@ -139,20 +135,26 @@ public class searchComics extends AppCompatActivity {
             dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
         }
 
+        if (SearchText == null || SearchText.isEmpty()) {
+            Log.e("SearchComics", "Search text is null or empty.");
+            return;
+        }
+
         Cursor cursor = dataBaseSQLLite.searchComics(dataBaseSQLLite.getReadableDatabase(), SearchText);
         if (cursor != null) {
             while (cursor.moveToNext()) {
                 @SuppressLint("Range") String idTruyen = cursor.getString(cursor.getColumnIndex("idTruyen"));
                 @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
                 @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
-                @SuppressLint("Range") int soLuotXem = cursor.getInt(cursor.getColumnIndex("soLuotXem"));
-                @SuppressLint("Range") int soLuotTheoDoi = cursor.getInt(cursor.getColumnIndex("soLuotTheoDoi"));
+                @SuppressLint("Range") int soLuotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
+                @SuppressLint("Range") int soLuotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
                 @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
                 @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
                 @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
 
                 // Tạo đối tượng Truyen với đầy đủ dữ liệu
                 Truyen truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, soLuotXem, soLuotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+                truyenList.add(truyen);
                 Log.d("Ten truyen", "Name: " + tenTruyen);
                 Log.d("Ten truyen", "Name: " + tenTacGia);
             }

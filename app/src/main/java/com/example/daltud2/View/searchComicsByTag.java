@@ -2,6 +2,7 @@ package com.example.daltud2.View;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.daltud2.Control.ComicAdapter;
 import com.example.daltud2.Control.DataBaseSQLLite;
 import com.example.daltud2.Control.GenericCustomSpinnerAdapter;
 import com.example.daltud2.Control.HeaderView;
@@ -32,7 +34,9 @@ import com.example.daltud2.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class searchComicsByTag extends AppCompatActivity {
 
@@ -46,8 +50,6 @@ public class searchComicsByTag extends AppCompatActivity {
     private GenericCustomSpinnerAdapter tagComicsAdapter;
     GenericCustomSpinnerAdapter<String> sortAdapter;
 
-
-
     private TextView previousPageNumber, tv4;
     private ImageButton btnBackwardStep, btnForwardStep, btnForwardFast, btnBackwardFast;
     private LinearLayout pageNumbersLayout;
@@ -56,12 +58,14 @@ public class searchComicsByTag extends AppCompatActivity {
 
     private TextView tv_category;
     private TextView tv_selected;
-
     private DataBaseSQLLite dataBaseSQLLite;
 
     private final List<List<Truyen>> pageDataList = new ArrayList<>();
     private List<Truyen> truyenList = new ArrayList<>();
     private boolean isNotWhite = true;
+
+    private String tagComics = "Action";
+    private String sortComics = "Mới nhất";
     //endregion
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,9 +78,9 @@ public class searchComicsByTag extends AppCompatActivity {
             return insets;
         });
 
-
-        // Initialize views
         declareVal();
+        ComicList(tagComics,sortComics,20);
+
         tagComicsAdapter = new GenericCustomSpinnerAdapter(this,R.layout.item_selected,getListCategory());
         spinnerTag.setAdapter(tagComicsAdapter);
         sortAdapter = new GenericCustomSpinnerAdapter<>(this, R.layout.item_selected, sortOptions);
@@ -128,14 +132,6 @@ public class searchComicsByTag extends AppCompatActivity {
             @Override
             public void onSearchButtonClicked() {
             }
-
-            @Override
-            public void onSearchComicsClicked(String query) {
-            }
-
-            @Override
-            public void onHomeButtonClicked() {
-            }
         });
 
         bodyViewByTag.setDataProvider(new bodyView.dataProvide() {
@@ -151,12 +147,13 @@ public class searchComicsByTag extends AppCompatActivity {
                 tagComics selectedTag = (tagComics) tagComicsAdapter.getItem(i);
 
                 if (selectedTag != null) {
+                    tagComics = selectedTag.getName();
                     tagTitle.setText(selectedTag.getName());
                     tagDescription.setText(selectedTag.getDescription());
                     Toast.makeText(searchComicsByTag.this, selectedTag.getName(), Toast.LENGTH_SHORT).show();
-                }
 
-                getComicTag(selectedTag.getName());
+                    ComicList(tagComics, sortComics, 20);
+                }
             }
 
             @Override
@@ -168,25 +165,8 @@ public class searchComicsByTag extends AppCompatActivity {
         spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int i, long l) {
-                String selectedOption = sortOptions.get(i);
-                Toast.makeText(getApplicationContext(), selectedOption, Toast.LENGTH_SHORT).show();
-                if (selectedOption.equals("Mới nhất")) {
-                    /**
-                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có thời gian mới nhất
-                     */
-                } else if (selectedOption.equals("Cũ nhất")) {
-                    /**
-                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có thời gian cũ nhất
-                     */
-                } else if (selectedOption.equals("Lượt xem giảm dần")) {
-                    /**
-                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có view nhiều rồi giảm dần
-                     */
-                } else if (selectedOption.equals("Lượt xem tăng dần")) {
-                    /**
-                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có view ít nhất rồi tăng dần
-                     */
-                }
+                sortComics = sortOptions.get(i);
+                ComicList(tagComics, sortComics, 20);
             }
 
             @Override
@@ -194,8 +174,6 @@ public class searchComicsByTag extends AppCompatActivity {
 
             }
         });
-
-
     }
 
 
@@ -221,23 +199,37 @@ public class searchComicsByTag extends AppCompatActivity {
 
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private void ComicList(String tag, String type, int nums){
+        getComicTag(tag);
+        sortComicsBy(type);
+        createPageData(nums);
+
+        //khi chạy lần đầu thì nó sẽ ko sự thay đổi , nên chắc chắn lỗi, làm thêm cái kiểm tra
+        if (ListComic.getAdapter() != null) {
+            ((ComicAdapter) ListComic.getAdapter()).updateData(truyenList);
+        }
+    }
+
     private void getComicTag(String tag){
-        // lấy dữ liệu rồi tìm thông qua searchText
         if (dataBaseSQLLite == null) {
             dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
         }
 
         Cursor cursor = dataBaseSQLLite.searchComicsByTag(dataBaseSQLLite.getReadableDatabase(),tag);
         if (cursor != null) {
+            truyenList.clear();
             while (cursor.moveToNext()) {
                 @SuppressLint("Range") String idTruyen = cursor.getString(cursor.getColumnIndex("idTruyen"));
                 @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
                 @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
+                @SuppressLint("Range") int luotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
+                @SuppressLint("Range") int luotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
                 @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
                 @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
                 @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
 
-                truyenList.add(new Truyen(idTruyen,tenTruyen,tenTacGia,ngayPhatHanh,moTaTruyen,urlAnhBia));
+                truyenList.add(new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia));
                 Log.d("Ten truyen", "Name: " + tenTruyen);
                 Log.d("Ten truyen", "Name: " + tenTacGia);
             }
@@ -247,14 +239,13 @@ public class searchComicsByTag extends AppCompatActivity {
     }
 
     private void sortComicsBy(String type){
-        // Sắp xếp dựa trên tiêu chí
         switch (type) {
             case "Mới nhất":
                 truyenList.sort((truyen1, truyen2) -> truyen2.getNgayPhatHanh().compareTo(truyen1.getNgayPhatHanh()));
                 break;
 
             case "Cũ nhất":
-                truyenList.sort((truyen1, truyen2) -> truyen1.getNgayPhatHanh().compareTo(truyen2.getNgayPhatHanh()));
+                truyenList.sort(Comparator.comparing(Truyen::getNgayPhatHanh));
                 break;
 
             case "Lượt xem giảm dần":
@@ -262,19 +253,17 @@ public class searchComicsByTag extends AppCompatActivity {
                 break;
 
             case "Lượt xem tăng dần":
-                truyenList.sort((truyen1, truyen2) -> Integer.compare(truyen1.getSoLuotTheoDoi(), truyen2.getSoLuotTheoDoi()));
+                truyenList.sort(Comparator.comparingInt(Truyen::getSoLuotTheoDoi));
                 break;
 
             default:
                 Log.d("SortComicsBy", "Tiêu chí sắp xếp không hợp lệ: " + type);
                 return;
         }
-
-        createSampleData(20);
-        ListComic.getAdapter().notifyDataSetChanged();
+        Log.d("sortComicsBy", "Sorted comics by: " + type);
     }
 
-    private void createSampleData(int numItems) {
+    private void createPageData(int numItems) {
         pageDataList.clear();
         int startIndex = 0;
         while (startIndex < truyenList.size()) {
@@ -285,30 +274,26 @@ public class searchComicsByTag extends AppCompatActivity {
         }
     }
 
-    private List<tagComics> getListCategory(){
-        List<tagComics> tagcomics = new ArrayList<>();
-        tagcomics.add(new tagComics("Action", "Thể loại này thường có nội dung về đánh nhau, bạo lực, hỗn loạn, với diễn biến nhanh"));
-        tagcomics.add(new tagComics("Adventure", "Thể loại này tập trung vào các chuyến phiêu lưu và thám hiểm."));
-        tagcomics.add(new tagComics("Anime", "Thể loại liên quan đến phong cách hoạt hình Nhật Bản."));
-        tagcomics.add(new tagComics("Chuyển Sinh", "Thể loại mà nhân vật chính được chuyển sinh hoặc tái sinh sang thế giới khác."));
-        tagcomics.add(new tagComics("Cổ Đại", "Thể loại lấy bối cảnh trong thời kỳ lịch sử xa xưa."));
-        tagcomics.add(new tagComics("Comedy", "Thể loại hài hước với nội dung nhẹ nhàng và gây cười."));
-        tagcomics.add(new tagComics("Comic", "Thể loại truyện tranh tổng hợp từ nhiều chủ đề khác nhau."));
-        tagcomics.add(new tagComics("Demons", "Thể loại liên quan đến quỷ và các sinh vật siêu nhiên."));
-        tagcomics.add(new tagComics("Detective", "Thể loại truyện điều tra, phá án và các vụ án bí ẩn."));
-        tagcomics.add(new tagComics("Doujinshi", "Thể loại truyện tự sáng tác của người hâm mộ dựa trên các tác phẩm gốc."));
-        tagcomics.add(new tagComics("Drama", "Thể loại truyện với tình tiết kịch tính và cảm xúc."));
-        tagcomics.add(new tagComics("Fantasy", "Thể loại viễn tưởng, thường có yếu tố phép thuật hoặc thế giới kỳ ảo."));
-        tagcomics.add(new tagComics("Gender Bender", "Thể loại nhân vật chính bị thay đổi giới tính."));
-        tagcomics.add(new tagComics("Harem", "Thể loại mà nhân vật chính được bao quanh bởi nhiều người yêu hoặc người hâm mộ."));
-        tagcomics.add(new tagComics("Historical", "Thể loại lấy bối cảnh trong một thời kỳ lịch sử nhất định."));
-        tagcomics.add(new tagComics("Horror", "Thể loại kinh dị, tập trung vào yếu tố sợ hãi và rùng rợn."));
-        tagcomics.add(new tagComics("Huyền Huyễn", "Thể loại viễn tưởng kỳ ảo, thường xuất hiện trong các câu chuyện Trung Quốc."));
-        tagcomics.add(new tagComics("Isekai", "Thể loại chuyển sinh sang thế giới khác hoặc song song."));
-        tagcomics.add(new tagComics("Josei", "Thể loại dành cho đối tượng nữ trưởng thành."));
-        tagcomics.add(new tagComics("Mafia", "Thể loại xoay quanh thế giới ngầm và các tổ chức tội phạm."));
+    private List<tagComics> getListCategory() {
+        List<tagComics> tagComicsList = new ArrayList<>();
 
-        return tagcomics;
+        if (dataBaseSQLLite == null) {
+            dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
+        }
+
+        Cursor cursor = dataBaseSQLLite.getTagsComics(dataBaseSQLLite.getReadableDatabase());
+
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                @SuppressLint("Range") String tenTag = cursor.getString(cursor.getColumnIndex("tenTag"));
+                @SuppressLint("Range") String moTaTag = cursor.getString(cursor.getColumnIndex("moTaTag"));
+
+                tagComicsList.add(new tagComics(tenTag, moTaTag));
+            }
+            cursor.close();
+        }
+
+        return tagComicsList;
     }
 
 

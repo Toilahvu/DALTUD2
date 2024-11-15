@@ -108,14 +108,6 @@ public class searchByRank extends AppCompatActivity {
             @Override
             public void onSearchButtonClicked() {
             }
-
-            @Override
-            public void onSearchComicsClicked(String query) {
-            }
-
-            @Override
-            public void onHomeButtonClicked() {
-            }
         });
 
         bodyView.setDataProvider(new bodyView.dataProvide() {
