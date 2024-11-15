@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,6 +25,7 @@ import com.example.daltud2.Model.Truyen;
 import com.example.daltud2.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class searchComics extends AppCompatActivity {
@@ -40,14 +42,11 @@ public class searchComics extends AppCompatActivity {
     private RecyclerView ListComic;
 
     private final List<List<Truyen>> pageDataList = new ArrayList<>();
-    private List<Truyen> truyenList = new ArrayList<>();
+    private final List<Truyen> truyenList = new ArrayList<>();
 
     private boolean isNotWhite = true;
 
     private DataBaseSQLLite dataBaseSQLLite;
-
-    private int numsItem = 20;
-
 
 
     @Override
@@ -64,7 +63,8 @@ public class searchComics extends AppCompatActivity {
 
         declareVal();
         getComicSearch(searchQuery);
-        createPage(numsItem);
+        int numbsItem = 20;
+        createPage(numbsItem);
 
         headerView.setHeaderListener(new HeaderView.HeaderListener() {
             @Override
@@ -108,8 +108,6 @@ public class searchComics extends AppCompatActivity {
                 return pageDataList;
             }
         });
-
-
     }
 
     private void declareVal() {
@@ -141,26 +139,56 @@ public class searchComics extends AppCompatActivity {
         }
 
         Cursor cursor = dataBaseSQLLite.searchComics(dataBaseSQLLite.getReadableDatabase(), SearchText);
-        if (cursor != null) {
+        Cursor cursor1 = dataBaseSQLLite.getAllTruyen(dataBaseSQLLite.getReadableDatabase());
+        truyenList.clear();
+        if (cursor != null && cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
-                @SuppressLint("Range") String idTruyen = cursor.getString(cursor.getColumnIndex("idTruyen"));
-                @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
-                @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
-                @SuppressLint("Range") int soLuotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
-                @SuppressLint("Range") int soLuotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
-                @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
-                @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
-                @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
-
-                // Tạo đối tượng Truyen với đầy đủ dữ liệu
-                Truyen truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, soLuotXem, soLuotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
-                truyenList.add(truyen);
-                Log.d("Ten truyen", "Name: " + tenTruyen);
-                Log.d("Ten truyen", "Name: " + tenTacGia);
+                createListComics(cursor);
             }
+            Log.d("getComicSearch", "Found results for query: " + SearchText);
             cursor.close();
-            Log.d("Truyen Count", "Total Truyen: " + truyenList.size());
+        } else {
+            if (cursor1 != null ) {
+                while (cursor1.moveToNext()) {
+                    createListComics(cursor1);
+                }
+                 getRandomItems(truyenList, 40);
+            }
+
+            tv_Notice.setText("Không tìm thấy truyện hoặc tên tác giả. dưới đây là đề xuất truyện ");
+            tv_Notice.setVisibility(View.VISIBLE);
+            Log.d("getComicSearch", "No data found for query: " + SearchText);
         }
+
+        if (cursor1 != null) cursor1.close();
+
+        Log.d("getComicSearch", "Total comics found: " + truyenList.size());
+    }
+
+
+    private List<Truyen> getRandomItems(List<Truyen> listTruyen, int count) {
+        Collections.shuffle(listTruyen);
+        return listTruyen.subList(0, Math.min(count, listTruyen.size()));
+    }
+
+    private List<Truyen> createListComics(Cursor cursor){
+        @SuppressLint("Range") String idTruyen = cursor.getString(cursor.getColumnIndex("idTruyen"));
+        @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
+        @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
+        @SuppressLint("Range") int soLuotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
+        @SuppressLint("Range") int soLuotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
+        @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+        @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
+        @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
+
+        // Tạo đối tượng Truyen với đầy đủ dữ liệu
+        Truyen truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, soLuotXem, soLuotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+        truyenList.add(truyen);
+
+        Log.d("Ten truyen", "Name: " + tenTruyen);
+        Log.d("Ten truyen", "Name: " + tenTacGia);
+
+        return  truyenList;
     }
 
     private void createPage(int numItems) {
@@ -173,6 +201,4 @@ public class searchComics extends AppCompatActivity {
             startIndex += pageSize;
         }
     }
-
-
 }

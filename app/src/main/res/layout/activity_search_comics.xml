@@ -22,12 +22,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        android:textSize="30dp"
-        android:textColor="@color/white"/>
+        android:textSize="15sp"
+        android:textColor="@color/white"
+        android:visibility="gone"/>
 
     <com.example.daltud2.Control.bodyView
         android:id="@+id/BodyViewByTag"
         android:layout_width="match_parent"
-        android:layout_height="410dp" />
+        android:layout_height="676dp" />
 
 </LinearLayout>
