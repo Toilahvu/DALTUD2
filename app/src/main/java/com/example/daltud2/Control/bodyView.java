@@ -77,7 +77,7 @@ public class bodyView extends LinearLayout {
     }
 
     private void listPageComic() {
-        if (pageDataList == null || pageDataList.isEmpty()) return;// nhỡ lỗi thì bỏ qua
+        if (pageDataList == null || pageDataList.isEmpty()) return;
 
         pageNumbersLayout.removeAllViews();
         maxPages = pageDataList.size();

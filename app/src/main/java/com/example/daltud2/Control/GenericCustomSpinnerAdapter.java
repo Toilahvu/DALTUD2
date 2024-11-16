@@ -18,8 +18,8 @@ import java.util.List;
 
 public class GenericCustomSpinnerAdapter<T> extends ArrayAdapter<T> {
 
-    private int resource; // Layout resource tùy chỉnh cho spinner
-    private Context context;
+    private final int resource; // Layout resource tùy chỉnh cho spinner
+    private final Context context;
     private boolean isNotWhite = true;
 
     public GenericCustomSpinnerAdapter(@NonNull Context context, int resource, @NonNull List<T> objects) {

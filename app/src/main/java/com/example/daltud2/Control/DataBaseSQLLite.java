@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
 import java.util.Random;
 import com.example.daltud2.Model.NguoiDung;
 
@@ -16,7 +15,7 @@ import java.io.File;
 
 public class DataBaseSQLLite extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "webDocTruyen";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Constructor có tham số tên cơ sở dữ liệu
     public DataBaseSQLLite(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -51,15 +50,15 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         db.execSQL(createAdminTable);
 
         // Tạo bảng truyen
-        String createTruyenTable = "CREATE TABLE IF NOT EXISTS truyen (" +
-                "idTruyen VARCHAR(50) PRIMARY KEY," +
-                "tenTruyen VARCHAR(255) NOT NULL," +
-                "tenTacGia VARCHAR(255)," +
-                "luotXem INT,"+
-                "luotTheoDoi,"+
-                "ngayPhatHanh DATE," +
-                "moTaTruyen TEXT," +
-                "urlAnhBia VARCHAR(255)" +
+        String createTruyenTable = "CREATE TABLE IF NOT EXISTS truyen (\n" +
+                "    idTruyen VARCHAR(50) PRIMARY KEY,\n" +
+                "    tenTruyen VARCHAR(255) NOT NULL,\n" +
+                "    tenTacGia VARCHAR(255),\n" +
+                "    luotXem INT,\n" +
+                "    luotTheoDoi INT,\n" +
+                "    ngayPhatHanh DATE,\n" +
+                "    moTaTruyen TEXT,\n" +
+                "    urlAnhBia VARCHAR(255)\n" +
                 ");";
         db.execSQL(createTruyenTable);
 
@@ -363,8 +362,8 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
 
     //Select truyện có từ khoá giống
     public Cursor searchComics(SQLiteDatabase db, String tv_comicSearch) {
-        String query = "SELECT * FROM truyen WHERE tenTruyen LIKE '%" + tv_comicSearch + "%' OR tenTacGia LIKE '%" + tv_comicSearch + "%'";
-        return db.rawQuery(query, null);
+        String query = "SELECT * FROM truyen WHERE tenTruyen LIKE ? OR tenTacGia LIKE ?";
+        return db.rawQuery(query, new String[]{"%" + tv_comicSearch + "%", "%" + tv_comicSearch + "%"});
     }
 
     public Cursor searchComicsByTag(SQLiteDatabase db, String tv_Tag) {
@@ -452,6 +451,11 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         } else {
             Log.d("InsertUser", "User inserted successfully");
         }
+    }
+
+    public Cursor getTagsComics(SQLiteDatabase db){
+        String query = "SELECT * FROM address";
+        return db.rawQuery(query, null);
     }
 
 }

@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
         dataBaseSQLLite = new DataBaseSQLLite(this);
         //endregion
 
-
         createSampleData(20);
 
         headerView.setHeaderListener(new HeaderView.HeaderListener() {
@@ -106,14 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
              @Override
              public void onSearchButtonClicked() {
-             }
-
-             @Override
-             public void onSearchComicsClicked(String query) {
-             }
-
-             @Override
-             public void onHomeButtonClicked() {
              }
         });
 
