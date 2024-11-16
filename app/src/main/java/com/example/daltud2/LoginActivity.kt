@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
@@ -14,6 +15,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.daltud2.Control.DataBaseSQLLite
 import com.example.daltud2.Model.NguoiDung
+import com.example.daltud2.View.MainActivity
 
 class LoginActivity : AppCompatActivity() {
 
@@ -23,6 +25,8 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var passwordEditText: EditText
     private lateinit var forgotPasswordTextView: TextView
     private lateinit var dataBaseSQLLite: DataBaseSQLLite
+    private lateinit var logo: ImageView
+    private lateinit var dkbtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +53,8 @@ class LoginActivity : AppCompatActivity() {
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         forgotPasswordTextView = findViewById(R.id.forgotPasswordTextView)
+        logo = findViewById(R.id.logo)
+        dkbtn = findViewById(R.id.dkbtn)
 
     }
 
@@ -64,7 +70,7 @@ class LoginActivity : AppCompatActivity() {
 
         // Xử lý sự kiện khi nhấn vào RadioButton
         radioButton.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
+            val intent = Intent(this, AdminActivity::class.java)
             startActivity(intent)
         }
 
@@ -95,6 +101,14 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Sai email hoặc mật khẩu", Toast.LENGTH_SHORT).show()
                 Log.d("Account", "Email: " + email + " Pass: " + password)
             }
+        }
+        logo.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+        dkbtn.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
         }
     }
 }

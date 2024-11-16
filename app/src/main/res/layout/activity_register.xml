@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/logo"
@@ -97,7 +97,7 @@
         android:id="@+id/switchToLoginRadioButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Chuyển sang trang Đăng nhập"
+        android:text="Đăng nhập với chế độ admin"
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

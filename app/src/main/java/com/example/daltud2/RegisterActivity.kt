@@ -1,10 +1,12 @@
 package com.example.daltud2
 
+import android.content.ClipData.newIntent
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -12,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.daltud2.Control.DataBaseSQLLite
+import com.example.daltud2.View.MainActivity
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -21,6 +24,8 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var passwordEditText: EditText
     private lateinit var rewpasswordEditText: EditText
     private lateinit var resgisterButton: Button
+    private lateinit var logo : ImageView
+    private lateinit var dnbtn : Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +49,13 @@ class RegisterActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.passwordEditText)
         rewpasswordEditText = findViewById(R.id.rewpasswordEditText)
         resgisterButton = findViewById(R.id.resgisterButton)
+        logo = findViewById(R.id.logo)
+        dnbtn = findViewById(R.id.dnbtn)
     }
     private fun Events() {
         radioButton.setOnClickListener {
-            finish()
+                val intent = Intent(this, AdminActivity::class.java)
+                startActivity(intent)
         }
 
         resgisterButton.setOnClickListener {
@@ -87,6 +95,14 @@ class RegisterActivity : AppCompatActivity() {
             // val intent = Intent(this, LoginActivity::class.java)
             // startActivity(intent)
             // finish()
+        }
+        logo.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+        dnbtn.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
         }
     }
 }
