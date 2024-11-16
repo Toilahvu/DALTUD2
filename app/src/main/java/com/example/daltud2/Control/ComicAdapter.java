@@ -9,10 +9,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.daltud2.Model.Comic;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import com.example.daltud2.Model.Truyen;
 import com.example.daltud2.R;
 
+import java.io.File;
 import java.util.List;
 
 public class ComicAdapter extends RecyclerView.Adapter<ComicAdapter.ComicViewHolder> {
@@ -45,6 +48,15 @@ public class ComicAdapter extends RecyclerView.Adapter<ComicAdapter.ComicViewHol
     public void onBindViewHolder(@NonNull ComicAdapter.ComicViewHolder holder, int position) {
         Truyen comic = comicList.get(position);
         holder.comicTitle.setText(comic.getTenTruyen());
+
+        String imagePath = comic.getUrlAnhBia();
+        File imgFile = new File(imagePath);
+        if (imgFile.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            holder.comicImage.setImageBitmap(bitmap);
+        } else {
+            holder.comicImage.setImageResource(R.drawable.logo);
+        }
     }
 
     @Override
