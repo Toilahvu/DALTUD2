@@ -27,6 +27,7 @@ import com.example.daltud2.View.MainActivity;
 import com.example.daltud2.View.searchByRank;
 import com.example.daltud2.View.searchComics;
 import com.example.daltud2.View.searchComicsByTag;
+import com.example.daltud2.View.user_Monitor_Comics;
 
 public class HeaderView extends LinearLayout {
 
@@ -157,7 +158,7 @@ public class HeaderView extends LinearLayout {
                     intent = new Intent(getContext(), searchByRank.class);
                     getContext().startActivity(intent);
                 } else if (menuItem.getItemId() == R.id.item_3) {
-                    intent = new Intent(getContext() ,searchComicsByTag.class);
+                    intent = new Intent(getContext() , user_Monitor_Comics.class);
                     getContext().startActivity(intent);
                 } else return false;
                 return true;

@@ -15,7 +15,7 @@ import java.io.File;
 
 public class DataBaseSQLLite extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "webDocTruyen";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
 
     // Constructor có tham số tên cơ sở dữ liệu
     public DataBaseSQLLite(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -175,10 +175,10 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
             // Chèn dữ liệu vào bảng truyen
             if (BangTrongko(db, "truyen")) {
                 String insertTruyen = "INSERT INTO truyen (idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia) VALUES " +
-                        "('truyen01', 'Ta là tà đế', 'Nguyễn Văn A', 500, 100, '2019-11-13', 'Truyện huyền huyễn về hành trình của nhân vật chính.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/0.jpg'), " +
-                        "('truyen02', 'Lăng tiên kỳ đàm', 'Lê Thị B', 300, 50, '2021-05-09', 'Một câu chuyện phiêu lưu thú vị.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/0.jpg'), " +
-                        "('truyen03', 'Cuộc chiến với yêu ma', 'Trần Văn C', 800, 200, '2020-08-21', 'Một câu chuyện về chiến đấu với yêu ma.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/0.jpg'), " +
-                        "('truyen04', 'Hành trình kỳ ảo', 'Phạm Thị D', 1000, 300, '2018-01-10', 'Hành trình khám phá thế giới mới đầy kỳ diệu.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/0.jpg');";
+                        "('truyen01', 'Ta là tà đế', 'Nguyễn Văn A', 500, 100, '2019-11-13', 'Truyện huyền huyễn về hành trình của nhân vật chính.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/1.jpg'), " +
+                        "('truyen02', 'Lăng tiên kỳ đàm', 'Lê Thị B', 300, 50, '2021-05-09', 'Một câu chuyện phiêu lưu thú vị.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/1.jpg'), " +
+                        "('truyen03', 'Cuộc chiến với yêu ma', 'Trần Văn C', 800, 200, '2020-08-21', 'Một câu chuyện về chiến đấu với yêu ma.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/1.jpg'), " +
+                        "('truyen04', 'Hành trình kỳ ảo', 'Phạm Thị D', 1000, 300, '2018-01-10', 'Hành trình khám phá thế giới mới đầy kỳ diệu.', '/data/data/com.example.daltud2/files/images/comics/Ta_La_Ta_De/1.jpg');";
                 db.execSQL(insertTruyen);
             }
 
@@ -372,6 +372,14 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 "INNER JOIN truyen_address ta ON t.idTruyen = ta.idTruyen " +
                 "WHERE ta.tenTag LIKE '%" + tv_Tag + "%' ";
         return db.rawQuery(query, null);
+    }
+
+    public Cursor userMonitor(SQLiteDatabase db, String userID) {
+        String query = "SELECT t.* " +
+                "FROM truyen t " +
+                "INNER JOIN theo_doi_truyen ta ON t.idTruyen = ta.idTruyen " +
+                "WHERE ta.idUser LIKE ?";
+        return db.rawQuery(query, new String[]{"%" + userID + "%"});
     }
 
 
