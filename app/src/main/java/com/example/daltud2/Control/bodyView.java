@@ -59,6 +59,7 @@ public class bodyView extends LinearLayout {
             }
 
             listPageComic();
+            updateNavigationButtons();
         }
     }
 
@@ -78,12 +79,13 @@ public class bodyView extends LinearLayout {
 
     private void listPageComic() {
         if (pageDataList == null || pageDataList.isEmpty()) return;
+        if(pageDataList.size() == 1) return;
 
         pageNumbersLayout.removeAllViews();
         maxPages = pageDataList.size();
 
         // Xác định giới hạn dải trang hiển thị
-        int displayRange = 5; // Hiển thị tối đa 5 trang
+        int displayRange = 5;
         int startPage = Math.max(1, currentPage - 2);
         int endPage = Math.min(startPage + displayRange - 1, maxPages);
 
@@ -119,21 +121,28 @@ public class bodyView extends LinearLayout {
         }
     }
 
-
-    private void updateNavigationButtons(View view) {
-        if (currentPage == 1) {
+    private void updateNavigationButtons() {
+        if (maxPages == 1) {
             btnBackwardStep.setVisibility(View.GONE);
             btnBackwardFast.setVisibility(View.GONE);
-        } else {
-            btnBackwardStep.setVisibility(View.VISIBLE);
-            btnBackwardFast.setVisibility(View.VISIBLE);
+            btnForwardStep.setVisibility(View.GONE);
+            btnForwardFast.setVisibility(View.GONE);
+            return;
         }
 
-        // Ẩn nút "trang sau" và "về cuối" khi đang ở trang cuối cùng
-        if (currentPage == maxPages) {
+        if ( currentPage == 1) {
+            btnBackwardStep.setVisibility(View.GONE);
+            btnBackwardFast.setVisibility(View.GONE);
+            btnForwardStep.setVisibility(View.VISIBLE);
+            btnForwardFast.setVisibility(View.VISIBLE);
+        } else if (currentPage == maxPages) {
+            btnBackwardStep.setVisibility(View.VISIBLE);
+            btnBackwardFast.setVisibility(View.VISIBLE);
             btnForwardStep.setVisibility(View.GONE);
             btnForwardFast.setVisibility(View.GONE);
         } else {
+            btnBackwardStep.setVisibility(View.VISIBLE);
+            btnBackwardFast.setVisibility(View.VISIBLE);
             btnForwardStep.setVisibility(View.VISIBLE);
             btnForwardFast.setVisibility(View.VISIBLE);
         }
@@ -146,7 +155,7 @@ public class bodyView extends LinearLayout {
                 currentPage = 1;
                 adapter.updateData(pageDataList.get(currentPage - 1));
                 listPageComic();
-                updateNavigationButtons(view);
+                updateNavigationButtons();
             }
         });
         btnBackwardStep.setOnClickListener(view -> {
@@ -155,7 +164,7 @@ public class bodyView extends LinearLayout {
                 currentPage--;
                 adapter.updateData(pageDataList.get(currentPage - 1));
                 listPageComic();
-                updateNavigationButtons(view);
+                updateNavigationButtons();
             }
         });
         btnForwardStep.setOnClickListener(view -> {
@@ -164,7 +173,7 @@ public class bodyView extends LinearLayout {
                 currentPage++;
                 adapter.updateData(pageDataList.get(currentPage - 1));
                 listPageComic();
-                updateNavigationButtons(view);
+                updateNavigationButtons();
             }
         });
         btnForwardFast.setOnClickListener(view -> {
@@ -173,7 +182,7 @@ public class bodyView extends LinearLayout {
                 currentPage = maxPages;
                 adapter.updateData(pageDataList.get(currentPage - 1));
                 listPageComic();
-                updateNavigationButtons(view);
+                updateNavigationButtons();
             }
         });
     }

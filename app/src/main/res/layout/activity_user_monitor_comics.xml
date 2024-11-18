@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     app:layoutDescription="@xml/activity_main_scene"
     android:orientation="vertical"
-    tools:context=".View.MainActivity"
-    android:id="@+id/main">
+    tools:context=".View.user_Monitor_Comics"
+    android:id="@+id/user_Monitor">
 
 
     <!-- HeaderView -->
