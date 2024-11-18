@@ -76,9 +76,8 @@ public class MainActivity extends AppCompatActivity {
         //region Initial Setup
         declareVal();
         dataBaseSQLLite = new DataBaseSQLLite(this);
+        returnDataListPage();
         //endregion
-
-        createSampleData(20);
 
         headerView.setHeaderListener(new HeaderView.HeaderListener() {
              @Override
@@ -103,9 +102,6 @@ public class MainActivity extends AppCompatActivity {
                  isNotWhite = !isNotWhite;
              }
 
-             @Override
-             public void onSearchButtonClicked() {
-             }
         });
 
         bodyViewInstance.setDataProvider(new bodyView.dataProvide() {
@@ -161,17 +157,39 @@ public class MainActivity extends AppCompatActivity {
         Log.d("SortTimeComics", "Danh sách đã được sắp xếp theo thời gian.");
     }
 
-    private void createSampleData(int numItems) {
-        getAllruyen();
-        sortTimeComics();
+    private void createListComics(int numItems) {
         pageDataList.clear();
         int startIndex = 0;
         while (startIndex < truyenList.size()) {
-            int pageSize = 20;
-            int endIndex = Math.min(startIndex + pageSize, truyenList.size());
+            int endIndex = Math.min(startIndex + numItems, truyenList.size());
             pageDataList.add(new ArrayList<>(truyenList.subList(startIndex, endIndex)));
-            startIndex += pageSize;
+            startIndex += numItems;
         }
+    }
+
+    private void createSampleComicsData(int Nums) {
+        truyenList.clear();
+        for (int i = 1; i <= Nums; i++) {
+            String idTruyen = String.format("truyen%03d", i);
+            String tenTruyen = "Truyện mẫu " + i;
+            String tenTacGia = "Tác giả " + i;
+            int luotXem = (int) (Math.random() * 10000);
+            int luotTheoDoi = (int) (Math.random() * 1000);
+            String ngayPhatHanh = "2023-" + (i % 12 + 1) + "-" + (i % 28 + 1);
+            String moTaTruyen = "Đây là mô tả cho truyện mẫu số " + i;
+            String urlAnhBia = "/path/to/sample/images/" + idTruyen + ".jpg";
+
+            Truyen truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+
+            truyenList.add(truyen);
+        }
+    }
+
+    private void returnDataListPage(){
+        getAllruyen();
+        //createSampleComicsData(400);
+        sortTimeComics();
+        createListComics(20);
     }
 
     //endregion

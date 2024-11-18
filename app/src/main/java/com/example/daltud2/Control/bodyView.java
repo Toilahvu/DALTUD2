@@ -85,8 +85,9 @@ public class bodyView extends LinearLayout {
         maxPages = pageDataList.size();
 
         // Xác định giới hạn dải trang hiển thị
-        int displayRange = 5;
-        int startPage = Math.max(1, currentPage - 2);
+        int displayRange = 4;
+        int startPage = currentPage;//Math.max(1, currentPage-2);
+        // mục đích -2 là cho cân đối, chứ để startPage = currentPage cx đc
         int endPage = Math.min(startPage + displayRange - 1, maxPages);
 
         // Điều chỉnh dải hiển thị để trang hiện tại luôn ở giữa
@@ -109,6 +110,7 @@ public class bodyView extends LinearLayout {
                 previousPageNumber = pageNumber;
                 ListComic.scrollToPosition(0);
                 listPageComic();
+                updateNavigationButtons();
             });
 
             if (i == currentPage) {

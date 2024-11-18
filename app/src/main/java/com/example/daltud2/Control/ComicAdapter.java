@@ -1,6 +1,7 @@
 package com.example.daltud2.Control;
 
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class ComicAdapter extends RecyclerView.Adapter<ComicAdapter.ComicViewHolder> {
 
-    public class ComicViewHolder extends RecyclerView.ViewHolder {
+    public static class ComicViewHolder extends RecyclerView.ViewHolder {
         public TextView comicTitle;
         public ImageView comicImage;
 
@@ -63,6 +64,8 @@ public class ComicAdapter extends RecyclerView.Adapter<ComicAdapter.ComicViewHol
     public int getItemCount() {
         return comicList.size();
     }
+
+    @SuppressLint("NotifyDataSetChanged")
     public void updateData(List<Truyen> newComicList) {
         this.comicList = newComicList;
         notifyDataSetChanged(); // Báo cho RecyclerView biết dữ liệu đã thay đổi

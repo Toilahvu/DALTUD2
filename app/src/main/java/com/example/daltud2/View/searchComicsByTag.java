@@ -128,10 +128,6 @@ public class searchComicsByTag extends AppCompatActivity {
                 spinnerTag.invalidate();
                 spinnerSort.invalidate();
             }
-
-            @Override
-            public void onSearchButtonClicked() {
-            }
         });
 
         bodyViewByTag.setDataProvider(new bodyView.dataProvide() {

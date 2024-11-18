@@ -73,9 +73,6 @@ public class HeaderView extends LinearLayout {
                 searchBar.setVisibility(View.GONE);
             }
 
-            if (listener != null) {
-                listener.onSearchButtonClicked();
-            }
 
         });
 
@@ -189,10 +186,5 @@ public class HeaderView extends LinearLayout {
     // Interface để định nghĩa các sự kiện
     public interface HeaderListener {
         void onUIChangeRequested();
-        void onSearchButtonClicked();
-        //void onSearchComicsClicked(String query);
     }
-
-
-
 }

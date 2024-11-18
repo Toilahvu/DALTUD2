@@ -86,10 +86,6 @@ public class user_Monitor_Comics extends AppCompatActivity {
                 }
                 isNotWhite = !isNotWhite;
             }
-
-            @Override
-            public void onSearchButtonClicked() {
-            }
         });
 
         bodyViewInstance.setDataProvider(new bodyView.dataProvide() {

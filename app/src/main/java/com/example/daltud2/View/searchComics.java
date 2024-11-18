@@ -96,10 +96,6 @@ public class searchComics extends AppCompatActivity {
                 }
                 isNotWhite = !isNotWhite;
             }
-
-            @Override
-            public void onSearchButtonClicked() {
-            }
         });
 
         bodyViewByTag.setDataProvider(new bodyView.dataProvide() {

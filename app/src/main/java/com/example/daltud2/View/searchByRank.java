@@ -104,10 +104,6 @@ public class searchByRank extends AppCompatActivity {
                 sortRankpinner.invalidate();
 
             }
-
-            @Override
-            public void onSearchButtonClicked() {
-            }
         });
 
         bodyView.setDataProvider(new bodyView.dataProvide() {
