@@ -1,18 +1,14 @@
-<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
-        android:id="@+id/menu_manage_stories"
+        android:id="@+id/stories"
         android:icon="@drawable/story"
         android:title="Quản lý truyện" />
-
     <item
-        android:id="@+id/menu_manage_accounts"
+        android:id="@+id/accounts"
         android:icon="@drawable/account"
         android:title="Quản lý tài khoản" />
-
     <item
-        android:id="@+id/menu_settings"
+        android:id="@+id/settings"
         android:icon="@drawable/setting"
         android:title="Cài đặt" />
 </menu>

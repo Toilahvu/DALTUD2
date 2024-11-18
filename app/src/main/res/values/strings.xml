@@ -52,5 +52,10 @@
     <string name="text_top_button">↑</string>
     <string name="footer_text">Footer with member names and information</string>
     <string name="SapXep">Sắp xếp</string>
+    <string name="todo">TODO</string>
+    <string name="todoo">TODO</string>
+    <string name="stories">Stories</string>
+    <string name="accounts">Accounts</string>
+    <string name="settings">Settings</string>
 
 </resources>
