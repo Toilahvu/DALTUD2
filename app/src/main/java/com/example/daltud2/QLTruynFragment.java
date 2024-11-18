@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daltud2.Model.Story;
+import com.example.daltud2.Model.StoryAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
 public class QLTruynFragment extends Fragment {
 
     private List<Story> storyList = new ArrayList<>();
-    private com.example.daltud2.StoryAdapter adapter;
+    private com.example.daltud2.Model.StoryAdapter adapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class QLTruynFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewStories);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        adapter = new com.example.daltud2.StoryAdapter(storyList, new com.example.daltud2.StoryAdapter.OnStoryClickListener() {
+        adapter = new StoryAdapter(storyList, new com.example.daltud2.Model.StoryAdapter.OnStoryClickListener() {
             @Override
             public void onEditStory(int position, Story story) {
 
@@ -79,5 +80,4 @@ public class QLTruynFragment extends Fragment {
         storyList.remove(position);
         adapter.notifyItemRemoved(position);
     }
-
 }

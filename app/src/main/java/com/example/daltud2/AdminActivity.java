@@ -18,48 +18,64 @@ public class AdminActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Kích hoạt chế độ Edge to Edge
         EdgeToEdge.enable(this);
+
+        // Đặt layout chính
         setContentView(R.layout.activity_admin);
+
+        // Thiết lập WindowInsets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            if (v != null) {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            }
             return insets;
         });
 
+        // Gọi các phương thức xử lý
         addControls();
         addEvents();
     }
-    void addControls()
-    {
+
+    void addControls() {
+        // Tìm đối tượng BottomNavigationView
         bottomNavigationView = findViewById(R.id.bottom_navigation);
     }
-    void addEvents()
-    {
-        // Xử lý sự kiện khi chọn menu
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.menu_manage_stories) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainer, new QLTruynFragment())
-                        .commit();
-                return true;
-            } else if (item.getItemId() == R.id.menu_manage_accounts) {
-                if (item.getItemId() == R.id.menu_manage_accounts) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragmentContainer, new QLTaiKhoanFragment())
-                            .commit();
-                }
-                return true;
-            } else if (item.getItemId() == R.id.menu_settings) {
-                if (item.getItemId() == R.id.menu_settings) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragmentContainer, new SettingsFragment())
-                            .commit();
-                }
-                return true;
-            }
-            return false;
-        });
 
+    void addEvents() {
+        // Xử lý sự kiện khi chọn menu
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setOnItemSelectedListener(item -> {
+                int itemId = item.getItemId();
+
+                if (itemId == R.id.stories) {
+                    // Thay thế fragment quản lý truyện
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new QLTruynFragment())
+                            .commit();
+                    return true;
+
+                } else if (itemId == R.id.accounts) {
+                    // Thay thế fragment quản lý tài khoản
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new QLTaiKhoanFragment())
+                            .commit();
+                    return true;
+
+                } else if (itemId == R.id.settings) {
+                    // Thay thế fragment cài đặt
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new SettingsFragment())
+                            .commit();
+                    return true;
+
+                } else {
+                    return false;
+                }
+            });
+        }
     }
 
 }
