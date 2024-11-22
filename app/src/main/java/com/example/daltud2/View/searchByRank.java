@@ -1,13 +1,17 @@
 package com.example.daltud2.View;
 
+import android.annotation.SuppressLint;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,11 +20,14 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.daltud2.Control.ComicAdapter;
+import com.example.daltud2.Control.DataBaseSQLLite;
 import com.example.daltud2.Control.GenericCustomSpinnerAdapter;
 import com.example.daltud2.Control.HeaderView;
 import com.example.daltud2.Control.bodyView;
 import com.example.daltud2.Model.Comic;
 import com.example.daltud2.Model.Truyen;
+import com.example.daltud2.Model.tagComics;
 import com.example.daltud2.R;
 
 import java.util.ArrayList;
@@ -46,9 +53,10 @@ public class searchByRank extends AppCompatActivity {
     private RecyclerView ListComic;
 
     private final List<List<Truyen>> pageDataList = new ArrayList<>();
-    private  int numItems = 1000;
     List<String> sortRank = Arrays.asList("Top Ngày", "Top Tuần", "Top Tháng");
     private GenericCustomSpinnerAdapter rankComicsAdapter;
+
+    private DataBaseSQLLite dataBaseSQLLite;
     //endregion
 
     @Override
@@ -63,9 +71,9 @@ public class searchByRank extends AppCompatActivity {
         });
 
         declareVal();
-        //createSampleData(numItems);
         rankComicsAdapter = new GenericCustomSpinnerAdapter(this,R.layout.item_selected,sortRank);
         sortRankpinner.setAdapter(rankComicsAdapter);
+        ComicList(getDatabaseEveryDayTrends(),20);
 
         headerView.setHeaderListener(new HeaderView.HeaderListener() {
             @Override
@@ -106,30 +114,21 @@ public class searchByRank extends AppCompatActivity {
             }
         });
 
-        bodyView.setDataProvider(new bodyView.dataProvide() {
-            @Override
-            public List<List<Truyen>> getPageDataList() {
-                return pageDataList;
-            }
-        });
-
         sortRankpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String selectedOption = sortRank.get(i);
                 tvRank.setText(selectedOption);
-                if (selectedOption.equals("Top Ngày")) {
-                    /**
-                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có thời gian mới nhất
-                     */
-                } else if (selectedOption.equals("Top Tuần")) {
-                    /**
-                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có thời gian cũ nhất
-                     */
-                } else if (selectedOption.equals("Top Tháng")) {
-                    /**
-                     * lay cai ma vi du Newest đi rồi tạo hàm dựa vào mã dể call database và tạo bảng truyện có view nhiều rồi giảm dần
-                     */
+                switch (selectedOption) {
+                    case "Top Ngày":
+                        ComicList(getDatabaseEveryDayTrends(), 20);
+                        break;
+                    case "Top Tuần":
+                        ComicList(getDatabaseEveryMonthTrends(), 20);
+                        break;
+                    case "Top Tháng":
+                        ComicList(getDatabaseEveryYearTrends(), 20);
+                        break;
                 }
             }
 
@@ -138,6 +137,15 @@ public class searchByRank extends AppCompatActivity {
 
             }
         });
+
+        bodyView.setDataProvider(new bodyView.dataProvide() {
+            @Override
+            public List<List<Truyen>> getPageDataList() {
+                return pageDataList;
+            }
+        });
+
+
     }
 
     //region method
@@ -158,23 +166,145 @@ public class searchByRank extends AppCompatActivity {
         btnBackwardFast = findViewById(R.id.btnBackwardFast);
     }
 
-    /*
-    private void createSampleData(int numItems) {
-        List<Comic> fullDataList = new ArrayList<>();
-        for (int i = 1; i <= numItems; i++) {
-            fullDataList.add(new Comic("Comic " + i, 0));
+    private List<Truyen> getDatabaseEveryDayTrends() {
+        List<Truyen> truyenList = new ArrayList<>();
+        if (dataBaseSQLLite == null) {
+            dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
         }
-        pageDataList.clear();
-        int startIndex = 0;
-        while (startIndex < fullDataList.size()) {
-            int pageSize = 20;
-            int endIndex = Math.min(startIndex + pageSize, fullDataList.size());
-            pageDataList.add(new ArrayList<>(fullDataList.subList(startIndex, endIndex)));
-            startIndex += pageSize;
+        @SuppressLint("SimpleDateFormat")
+        String ngayDoc = "21-11-2024";//new java.text.SimpleDateFormat("dd-MM-yyyy").format(new java.util.Date());
+
+        Cursor cursor = dataBaseSQLLite.danhSachTruyenDocNhieuTrongNgay(dataBaseSQLLite.getReadableDatabase(), ngayDoc);
+        if (cursor != null) {
+
+            while (cursor.moveToNext()) {
+                @SuppressLint("Range") String idTruyen = cursor.getString(cursor.getColumnIndex("idTruyen"));
+                @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
+                @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
+                @SuppressLint("Range") int luotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
+                @SuppressLint("Range") int luotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
+                @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+                @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
+                @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
+
+                //@SuppressLint("Range") int tongSoLanDoc = cursor.getInt(cursor.getColumnIndex("tongSoLanDoc"));
+
+                Truyen truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+                //truyen.setTongSoLanDoc(tongSoLanDoc); // Gán tổng số lần đọc
+                truyenList.add(truyen);
+            }
+            cursor.close();
+            Log.d("Truyen Count", "Total Truyen (Today): " + truyenList.size());
+        }
+        return truyenList;
+    }
+
+    private List<Truyen> getDatabaseEveryMonthTrends() {
+        List<Truyen> truyenList = new ArrayList<>();
+        if (dataBaseSQLLite == null) {
+            dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
+        }
+        @SuppressLint("SimpleDateFormat")
+        String thang ="11";// new java.text.SimpleDateFormat("MM").format(new java.util.Date());
+        String nam = "2024";//new java.text.SimpleDateFormat("yyyy").format(new java.util.Date());
+
+        Cursor cursor = dataBaseSQLLite.danhSachTruyenDocNhieuTrongThang(dataBaseSQLLite.getReadableDatabase(), thang, nam);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                @SuppressLint("Range") String idTruyen = cursor.getString(cursor.getColumnIndex("idTruyen"));
+                @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
+                @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
+                @SuppressLint("Range") int luotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
+                @SuppressLint("Range") int luotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
+                @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+                @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
+                @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
+
+                //@SuppressLint("Range") int tongSoLanDoc = cursor.getInt(cursor.getColumnIndex("tongSoLanDoc"));
+
+                Truyen truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+                //truyen.setTongSoLanDoc(tongSoLanDoc); // Gán tổng số lần đọc
+                truyenList.add(truyen);
+            }
+            cursor.close();
+            Log.d("Truyen Count", "Total Truyen (Month): " + truyenList.size());
+        }
+        return truyenList;
+    }
+
+    private List<Truyen> getDatabaseEveryYearTrends() {
+        List<Truyen> truyenList = new ArrayList<>();
+        if (dataBaseSQLLite == null) {
+            dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
+        }
+        @SuppressLint("SimpleDateFormat")
+        String nam = "2024";// new java.text.SimpleDateFormat("yyyy").format(new java.util.Date());
+
+        Cursor cursor = dataBaseSQLLite.danhSachTruyenDocNhieuTrongNam(dataBaseSQLLite.getReadableDatabase(), nam);
+        if (cursor != null) {
+
+            while (cursor.moveToNext()) {
+                @SuppressLint("Range") String idTruyen = cursor.getString(cursor.getColumnIndex("idTruyen"));
+                @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
+                @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
+                @SuppressLint("Range") int luotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
+                @SuppressLint("Range") int luotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
+                @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+                @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
+                @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
+
+                //@SuppressLint("Range") int tongSoLanDoc = cursor.getInt(cursor.getColumnIndex("tongSoLanDoc"));
+
+                Truyen truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+                //truyen.setTongSoLanDoc(tongSoLanDoc); // Gán tổng số lần đọc
+                truyenList.add(truyen);
+            }
+            cursor.close();
+            Log.d("Truyen Count", "Total Truyen (Year): " + truyenList.size());
+        }
+        return truyenList;
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void ComicList(List<Truyen> truyenList,int nums ){
+        createListComics(nums,truyenList);
+
+        //khi chạy lần đầu thì nó sẽ ko sự thay đổi , nên chắc chắn lỗi, làm thêm cái kiểm tra
+        if (ListComic.getAdapter() != null) {
+            ((ComicAdapter) ListComic.getAdapter()).updateData(truyenList);
         }
     }
 
-    */
+    private void createListComics(int numItems,List<Truyen> truyenList) {
+        pageDataList.clear();
+        int startIndex = 0;
+        while (startIndex < truyenList.size()) {
+            int endIndex = Math.min(startIndex + numItems, truyenList.size());
+            pageDataList.add(new ArrayList<>(truyenList.subList(startIndex, endIndex)));
+            startIndex += numItems;
+        }
+        System.out.println("Số trang: " + pageDataList.size());
+    }
+
+    private void createSampleComicsData(int Nums) {
+         List<Truyen> listTruyen = new ArrayList<>();
+        for (int i = 1; i <= Nums; i++) {
+            String idTruyen = String.format("truyen%03d", i);
+            String tenTruyen = "Truyện mẫu " + i;
+            String tenTacGia = "Tác giả " + i;
+            int luotXem = (int) (Math.random() * 10000);
+            int luotTheoDoi = (int) (Math.random() * 1000);
+            String ngayPhatHanh = "2023-" + (i % 12 + 1) + "-" + (i % 28 + 1);
+            String moTaTruyen = "Đây là mô tả cho truyện mẫu số " + i;
+            String urlAnhBia = "/path/to/sample/images/" + idTruyen + ".jpg";
+
+            Truyen truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+
+            listTruyen.add(truyen);
+        }
+        createListComics(20,listTruyen);
+
+    }
 
     //endregion
 }
