@@ -3,19 +3,25 @@ package com.example.daltud2.Control;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daltud2.Model.Comic;
 import com.example.daltud2.Model.Truyen;
 import com.example.daltud2.R;
+import com.example.daltud2.View.Message;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +36,8 @@ public class bodyView extends LinearLayout {
     private List<List<Truyen>> pageDataList = new ArrayList<>();  // Initialize with empty list
     private int maxPages;
     private ComicAdapter adapter;
+    private ImageView notificationButton;
+    private FragmentManager fragmentManager;
     private dataProvide provider;
 
     public bodyView(Context context, AttributeSet attrs) {
@@ -45,6 +53,7 @@ public class bodyView extends LinearLayout {
         this.provider = provider;
         initData();
     }
+
 
     private void initData() {
         if (provider != null) {
@@ -73,8 +82,27 @@ public class bodyView extends LinearLayout {
         tv4 = findViewById(R.id.textViewTitle);
         btnForwardFast = findViewById(R.id.btnForwardFast);
         btnBackwardFast = findViewById(R.id.btnBackwardFast);
+        notificationButton = findViewById(R.id.notification_button);
 
         setupPageNavigation();
+    }
+
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.fragmentManager = fragmentManager;
+        if (notificationButton != null) {
+            setupNotificationButton();
+        }
+    }
+
+
+    private void setupNotificationButton() {
+        notificationButton.setOnClickListener(view -> {
+            if (fragmentManager != null) {
+                Message.newInstance("Thông Báo Mới Nhất")
+                        .show(fragmentManager, "MessageDialog");
+            }
+        });
     }
 
     private void listPageComic() {

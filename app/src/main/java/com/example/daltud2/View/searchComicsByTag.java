@@ -136,6 +136,7 @@ public class searchComicsByTag extends AppCompatActivity {
                 return pageDataList;
             }
         });
+        bodyViewByTag.setFragmentManager(getSupportFragmentManager());
 
         spinnerTag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

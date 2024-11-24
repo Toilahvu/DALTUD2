@@ -583,4 +583,10 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         return db.rawQuery(query, new String[]{nam});
     }
 
+    public Cursor getAllNews(SQLiteDatabase db) {
+        String query = "SELECT * FROM new ORDER BY ngayDang DESC";
+        return db.rawQuery(query, null);
+    }
+
+
 }
