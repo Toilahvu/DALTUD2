@@ -128,10 +128,6 @@ public class searchComicsByTag extends AppCompatActivity {
                 spinnerTag.invalidate();
                 spinnerSort.invalidate();
             }
-
-            @Override
-            public void onSearchButtonClicked() {
-            }
         });
 
         bodyViewByTag.setDataProvider(new bodyView.dataProvide() {
@@ -140,6 +136,7 @@ public class searchComicsByTag extends AppCompatActivity {
                 return pageDataList;
             }
         });
+        bodyViewByTag.setFragmentManager(getSupportFragmentManager());
 
         spinnerTag.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -150,7 +147,8 @@ public class searchComicsByTag extends AppCompatActivity {
                     tagComics = selectedTag.getName();
                     tagTitle.setText(selectedTag.getName());
                     tagDescription.setText(selectedTag.getDescription());
-                    Toast.makeText(searchComicsByTag.this, selectedTag.getName(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(searchComicsByTag.this, selectedTag.getName(), Toast
+                            .LENGTH_SHORT).show();
 
                     ComicList(tagComics, sortComics, 20);
                 }
@@ -207,7 +205,7 @@ public class searchComicsByTag extends AppCompatActivity {
 
         //khi chạy lần đầu thì nó sẽ ko sự thay đổi , nên chắc chắn lỗi, làm thêm cái kiểm tra
         if (ListComic.getAdapter() != null) {
-            ((ComicAdapter) ListComic.getAdapter()).updateData(truyenList);
+            ((ComicAdapter) ListComic.getAdapter()).updateData(pageDataList.get(0));
         }
     }
 

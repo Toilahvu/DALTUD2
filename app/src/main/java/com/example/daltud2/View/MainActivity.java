@@ -2,6 +2,7 @@ package com.example.daltud2.View;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,7 +13,9 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
@@ -44,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class MainActivity extends AppCompatActivity {
 
     //region Variables
@@ -60,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout pageNumbersLayout;
     private LinearLayout  body;
     private RecyclerView ListComic;
+    private ImageView notificationButton;
+
     //endregion
 
     @Override
@@ -73,12 +79,24 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Kiểm tra nếu cần hiển thị popup
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        boolean showPopup = prefs.getBoolean("showPopup", true);
+
+        if (showPopup) {
+            Message messageFragment = Message.newInstance("Thông Báo Mới Nhất");
+            messageFragment.show(getSupportFragmentManager(), "MessageDialog");
+
+            // Cập nhật cờ để lần sau không hiển thị nữa
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("showPopup", false);
+            editor.apply();
+        }
         //region Initial Setup
         declareVal();
         dataBaseSQLLite = new DataBaseSQLLite(this);
+        returnDataListPage();
         //endregion
-
-        createSampleData(20);
 
         headerView.setHeaderListener(new HeaderView.HeaderListener() {
              @Override
@@ -91,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
                      btnBackwardFast.setColorFilter(Color.BLACK);
                      btnForwardStep.setColorFilter(Color.BLACK);
                      btnBackwardStep.setColorFilter(Color.BLACK);
+                     notificationButton.setColorFilter(Color.BLACK);
                  }else {
                      ListComic.setBackgroundColor(Color.parseColor("#18191A"));
                      tv4.setTextColor(Color.parseColor("#FFC107"));
@@ -99,13 +118,11 @@ public class MainActivity extends AppCompatActivity {
                      btnBackwardFast.setColorFilter(Color.WHITE);
                      btnForwardStep.setColorFilter(Color.WHITE);
                      btnBackwardStep.setColorFilter(Color.WHITE);
+                     notificationButton.setColorFilter(Color.WHITE);
                  }
                  isNotWhite = !isNotWhite;
              }
 
-             @Override
-             public void onSearchButtonClicked() {
-             }
         });
 
         bodyViewInstance.setDataProvider(new bodyView.dataProvide() {
@@ -114,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
                 return pageDataList;
             }
         });
+
+        bodyViewInstance.setFragmentManager(getSupportFragmentManager());
+
     }
 
     //region methods
@@ -128,13 +148,15 @@ public class MainActivity extends AppCompatActivity {
         body = findViewById(R.id.body);
         btnForwardFast = findViewById(R.id.btnForwardFast);
         btnBackwardFast = findViewById(R.id.btnBackwardFast);
+        notificationButton = findViewById(R.id.notification_button);
+
     }
     //endregion
 
     //region Database
     private void getAllruyen() {
         if (dataBaseSQLLite == null) {
-            dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
+            dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 7);
         }
         Cursor cursor = dataBaseSQLLite.getAllTruyen(dataBaseSQLLite.getReadableDatabase());
         if (cursor != null) {
@@ -161,17 +183,39 @@ public class MainActivity extends AppCompatActivity {
         Log.d("SortTimeComics", "Danh sách đã được sắp xếp theo thời gian.");
     }
 
-    private void createSampleData(int numItems) {
-        getAllruyen();
-        sortTimeComics();
+    private void createListComics(int numItems) {
         pageDataList.clear();
         int startIndex = 0;
         while (startIndex < truyenList.size()) {
-            int pageSize = 20;
-            int endIndex = Math.min(startIndex + pageSize, truyenList.size());
+            int endIndex = Math.min(startIndex + numItems, truyenList.size());
             pageDataList.add(new ArrayList<>(truyenList.subList(startIndex, endIndex)));
-            startIndex += pageSize;
+            startIndex += numItems;
         }
+    }
+
+    private void createSampleComicsData(int Nums) {
+        truyenList.clear();
+        for (int i = 1; i <= Nums; i++) {
+            String idTruyen = String.format("truyen%03d", i);
+            String tenTruyen = "Truyện mẫu " + i;
+            String tenTacGia = "Tác giả " + i;
+            int luotXem = (int) (Math.random() * 10000);
+            int luotTheoDoi = (int) (Math.random() * 1000);
+            String ngayPhatHanh = "2023-" + (i % 12 + 1) + "-" + (i % 28 + 1);
+            String moTaTruyen = "Đây là mô tả cho truyện mẫu số " + i;
+            String urlAnhBia = "/path/to/sample/images/" + idTruyen + ".jpg";
+
+            Truyen truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+
+            truyenList.add(truyen);
+        }
+    }
+
+    private void returnDataListPage(){
+        getAllruyen();
+        //createSampleComicsData(400);
+        sortTimeComics();
+        createListComics(20);
     }
 
     //endregion

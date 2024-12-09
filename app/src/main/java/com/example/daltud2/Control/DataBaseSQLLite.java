@@ -15,7 +15,7 @@ import java.io.File;
 
 public class DataBaseSQLLite extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "webDocTruyen";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 7;
 
     // Constructor có tham số tên cơ sở dữ liệu
     public DataBaseSQLLite(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -132,6 +132,18 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 ");";
         db.execSQL(createTruyenAddressTable);
 
+        String createLichSuDocTable = "CREATE TABLE lich_su_doc (" +
+                "idLichSu INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "userID VARCHAR(50)," +
+                "idTruyen VARCHAR(50)," +
+                "ngayDoc DATE NOT NULL," +
+                "soLanDoc INT DEFAULT 1," +
+                "FOREIGN KEY (userID) REFERENCES nguoi_dung(idUser)," +
+                "FOREIGN KEY (idTruyen) REFERENCES truyen(idTruyen)" +
+                ");";
+        db.execSQL(createLichSuDocTable);
+
+
         // Khởi tạo dữ liệu (nếu cần)
         InitData(db);
     }
@@ -147,6 +159,7 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS truyen");
         db.execSQL("DROP TABLE IF EXISTS admin");
         db.execSQL("DROP TABLE IF EXISTS nguoi_dung");
+        db.execSQL("DROP TABLE IF EXISTS lich_su_doc");
         onCreate(db);
     }
 
@@ -296,9 +309,53 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 db.execSQL(insertTruyenAddress);
             }
 
+            insertTestData(db);
+
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
+        }
+    }
+
+    public void insertTestData(SQLiteDatabase db) {
+        // Mảng ngày cho 7 ngày gần đây
+        String[] days = {
+                "15-11-2024",
+                "16-11-2024",
+                "17-11-2024",
+                "18-11-2024",
+                "19-11-2024",
+                "20-11-2024",
+                "21-11-2024" // Hôm nay
+        };
+
+        // Mảng ID truyện
+        String[] comics = {"truyen01", "truyen02", "truyen03", "truyen04"};
+
+        // Mảng ID người dùng (bỏ `user01`, chỉ còn `user02` đến `user05`)
+        String[] users = {"user02", "user03", "user04", "user05"};
+
+        // Tạo dữ liệu mẫu
+        db.beginTransaction(); // Sử dụng giao dịch để đảm bảo tính nhất quán
+        try {
+            for (String day : days) {
+                for (int i = 0; i < comics.length; i++) {
+                    String comic = comics[i];
+                    String user = users[i % users.length]; // Gán userID luân phiên từ `user02` đến `user05`
+
+                    // Random số lần đọc cho mỗi truyện trong mỗi ngày (từ 1 đến 5 lần)
+                    int soLanDoc = (int) (Math.random() * 5) + 1;
+
+                    // Chèn dữ liệu vào bảng lich_su_doc
+                    db.execSQL("INSERT INTO lich_su_doc (userID, idTruyen, ngayDoc, soLanDoc) VALUES (?, ?, ?, ?)",
+                            new Object[]{user, comic, day, soLanDoc});
+                }
+            }
+            db.setTransactionSuccessful(); // Đánh dấu giao dịch thành công
+        } catch (Exception e) {
+            e.printStackTrace(); // In lỗi nếu có
+        } finally {
+            db.endTransaction(); // Kết thúc giao dịch
         }
     }
 
@@ -346,8 +403,8 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
             }
         }
     }
-
     // select tất cả admin
+
     public Cursor timKiemAdmin(SQLiteDatabase db) {
         String query = "SELECT nguoi_dung.* FROM nguoi_dung " +
                 "INNER JOIN admin ON nguoi_dung.idUser = admin.idUser";
@@ -381,7 +438,6 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 "WHERE ta.idUser LIKE ?";
         return db.rawQuery(query, new String[]{"%" + userID + "%"});
     }
-
 
     // select tài khoản
     public NguoiDung kiemTraTaiKhoanMatKhau(SQLiteDatabase db, String emaill, String password) {
@@ -431,6 +487,7 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         db.close();
         return exists;
     }
+
     // Thêm người dùng mới
     public void insertNguoiDung(String email, String matKhau) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -465,5 +522,71 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         String query = "SELECT * FROM address";
         return db.rawQuery(query, null);
     }
+
+    public void ghiLichSuDoc(String idTruyen) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Lấy ngày hiện tại với định dạng dd-MM-yyyy
+        @SuppressLint("SimpleDateFormat")
+        String ngayDoc = new java.text.SimpleDateFormat("dd-MM-yyyy")
+                .format(new java.util.Date());
+
+        Cursor cursor = db.rawQuery("SELECT soLanDoc FROM lich_su_doc WHERE idTruyen = ? " +
+                "AND ngayDoc = ?",
+                new String[]{idTruyen, ngayDoc});
+
+        if (cursor.moveToFirst()) {
+            int soLanDoc = cursor.getInt(0) + 1;
+            db.execSQL("UPDATE lich_su_doc SET soLanDoc = ? WHERE idTruyen = ? AND ngayDoc = ?",
+                    new Object[]{soLanDoc, idTruyen, ngayDoc});
+        } else {
+            ContentValues values = new ContentValues();
+            values.put("idTruyen", idTruyen);
+            values.put("ngayDoc", ngayDoc);
+            values.put("soLanDoc", 1);
+            db.insert("lich_su_doc", null, values);
+        }
+
+        cursor.close();
+        db.close();
+    }
+
+    public Cursor danhSachTruyenDocNhieuTrongNgay(SQLiteDatabase db, String ngayDoc) {
+        String query = "SELECT t.*, SUM(ls.soLanDoc) AS tongSoLanDoc " +
+                "FROM lich_su_doc ls " +
+                "INNER JOIN truyen t ON ls.idTruyen = t.idTruyen " +
+                "WHERE ls.ngayDoc = ? " +
+                "GROUP BY t.idTruyen " +
+                "ORDER BY tongSoLanDoc DESC";
+        return db.rawQuery(query, new String[]{ngayDoc});
+    }
+
+    public Cursor danhSachTruyenDocNhieuTrongThang(SQLiteDatabase db, String thang, String nam) {
+        String query = "SELECT t.*, SUM(ls.soLanDoc) AS tongSoLanDoc " +
+                "FROM lich_su_doc ls " +
+                "INNER JOIN truyen t ON ls.idTruyen = t.idTruyen " +
+                "WHERE substr(ls.ngayDoc, 4, 7) = ? " +
+                "GROUP BY t.idTruyen " +
+                "ORDER BY tongSoLanDoc DESC";
+        String thangNam = (thang.length() == 1 ? "0" + thang : thang) + "-" + nam; // Tạo dạng MM-yyyy
+        return db.rawQuery(query, new String[]{thangNam});
+    }
+
+
+    public Cursor danhSachTruyenDocNhieuTrongNam(SQLiteDatabase db, String nam) {
+        String query = "SELECT t.*, SUM(ls.soLanDoc) AS tongSoLanDoc " +
+                "FROM lich_su_doc ls " +
+                "INNER JOIN truyen t ON ls.idTruyen = t.idTruyen " +
+                "WHERE substr(ls.ngayDoc, 7, 4) = ? " +
+                "GROUP BY t.idTruyen " +
+                "ORDER BY tongSoLanDoc DESC";
+        return db.rawQuery(query, new String[]{nam});
+    }
+
+    public Cursor getAllNews(SQLiteDatabase db) {
+        String query = "SELECT * FROM new ORDER BY ngayDang DESC";
+        return db.rawQuery(query, null);
+    }
+
 
 }

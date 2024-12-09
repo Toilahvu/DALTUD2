@@ -96,10 +96,6 @@ public class searchComics extends AppCompatActivity {
                 }
                 isNotWhite = !isNotWhite;
             }
-
-            @Override
-            public void onSearchButtonClicked() {
-            }
         });
 
         bodyViewByTag.setDataProvider(new bodyView.dataProvide() {
@@ -108,6 +104,7 @@ public class searchComics extends AppCompatActivity {
                 return pageDataList;
             }
         });
+        bodyViewByTag.setFragmentManager(getSupportFragmentManager());
     }
 
     private void declareVal() {
