@@ -1,20 +1,22 @@
 [versions]
-agp = "8.6.0"
-kotlin = "1.9.24"
-coreKtx = "1.13.1"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-appcompat = "1.7.0"
-material = "1.12.0"
-constraintlayout = "2.1.4"
-navigationFragmentKtx = "2.8.2"
-navigationUiKtx = "2.8.2"
-activity = "1.8.0"
-firebaseFirestore = "25.1.1"
+agp = "8.6.0" # Android Gradle Plugin
+flexbox = "3.0.0" # Thư viện Flexbox
+kotlin = "1.9.24" # Kotlin phiên bản mới nhất
+coreKtx = "1.13.1" # AndroidX Core KTX
+junit = "4.13.2" # JUnit cho kiểm thử
+junitVersion = "1.2.1" # AndroidX JUnit
+espressoCore = "3.6.1" # Espresso Core
+appcompat = "1.7.0" # AppCompat
+material = "1.12.0" # Material Design
+constraintlayout = "2.1.4" # ConstraintLayout
+navigationFragmentKtx = "2.8.2" # Navigation Fragment KTX
+navigationUiKtx = "2.8.2" # Navigation UI KTX
+activity = "1.8.0" # Activity KTX
+firebaseFirestore = "25.1.1" # Firebase Firestore
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+flexbox = { group = "com.google.android", name = "flexbox", version.ref = "flexbox" } # Sửa `module` thành `group` và `name`
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -29,4 +31,3 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-

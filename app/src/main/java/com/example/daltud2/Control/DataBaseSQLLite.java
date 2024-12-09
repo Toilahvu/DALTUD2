@@ -15,7 +15,7 @@ import java.io.File;
 
 public class DataBaseSQLLite extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "webDocTruyen";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 9;
 
     // Constructor có tham số tên cơ sở dữ liệu
     public DataBaseSQLLite(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -81,17 +81,18 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 ");";
         db.execSQL(createAnhChuongTable);
 
-        // Tạo bảng comment
+// Tạo bảng comment (cập nhật cột idTruyen thay vì idChapter)
         String createCommentTable = "CREATE TABLE IF NOT EXISTS comment (" +
                 "idComment VARCHAR(50) PRIMARY KEY," +
-                "idChapter VARCHAR(50)," +
+                "idTruyen VARCHAR(50)," +
                 "idUser VARCHAR(50)," +
                 "noiDungBinhLuan TEXT NOT NULL," +
                 "thoiGianBinhLuan DATE," +
-                "FOREIGN KEY (idChapter) REFERENCES chuong_truyen(idChapter)," +
+                "FOREIGN KEY (idTruyen) REFERENCES truyen(idTruyen)," +
                 "FOREIGN KEY (idUser) REFERENCES nguoi_dung(idUser)" +
                 ");";
         db.execSQL(createCommentTable);
+
 
         // Tạo bảng address
         String createAddressTable = "CREATE TABLE IF NOT EXISTS address (" +
@@ -150,18 +151,23 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // Xóa các bảng cũ
         db.execSQL("DROP TABLE IF EXISTS truyen_address");
         db.execSQL("DROP TABLE IF EXISTS theo_doi_truyen");
         db.execSQL("DROP TABLE IF EXISTS new");
         db.execSQL("DROP TABLE IF EXISTS address");
-        db.execSQL("DROP TABLE IF EXISTS comment");
+        db.execSQL("DROP TABLE IF EXISTS comment"); // Xóa bảng comment cũ
+        db.execSQL("DROP TABLE IF EXISTS anh_chuong");
         db.execSQL("DROP TABLE IF EXISTS chuong_truyen");
         db.execSQL("DROP TABLE IF EXISTS truyen");
         db.execSQL("DROP TABLE IF EXISTS admin");
         db.execSQL("DROP TABLE IF EXISTS nguoi_dung");
         db.execSQL("DROP TABLE IF EXISTS lich_su_doc");
+
+        // Tạo lại các bảng với cấu trúc mới
         onCreate(db);
     }
+
 
     private void InitData(SQLiteDatabase db) {
         db.beginTransaction();
@@ -173,6 +179,7 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                         "('user02', 'Le Thi B', '234', '0900000002', 'lethib@example.com', 0), " +          // user02 là user bình thường
                         "('user03', 'Tran Van C', '345', '0900000003', 'tranvanc@example.com', 0), " +      // user03 là user bình thường
                         "('user04', 'Pham Thi D', '456', '0900000004', 'phamthid@example.com', 0), " +      // user04 là user bình thường
+                        "('demoUser', 'Demo', '4567', '0900000007', 'phamthidemo@example.com', 0), " +      // user04 là user bình thường
                         "('user05', 'Hoang Van E', '567', '0900000005', 'hoangvane@example.com', 0)";       // user05 là user bình thường
                 db.execSQL(insertNguoiDung);
             }
@@ -211,14 +218,14 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
             // Chèn dữ liệu vào bảng anh_chuong
             insertImagesIntoDB(this, db); // Gọi hàm chèn ảnh
 
-            // Chèn dữ liệu vào bảng comment
+// Chèn dữ liệu vào bảng comment (cập nhật idTruyen thay vì idChapter)
             if (BangTrongko(db, "comment")) {
-                String insertComment = "INSERT INTO comment (idComment, idChapter, idUser, noiDungBinhLuan, thoiGianBinhLuan) VALUES " +
-                        "('comment01', 'Ta_La_Ta_De_Chap_0', 'user01', 'Hay qua!', '2020-01-15'), " +
-                        "('comment02', 'Ta_La_Ta_De_Chap_0', 'user02', 'Rất hấp dẫn!', '2021-02-15'), " +
-                        "('comment03', 'Ta_La_Ta_De_Chap_0', 'user03', 'Tác phẩm xuất sắc', '2022-03-15'), " +
-                        "('comment04', 'Lang_Tien_Ki_Dam_Chap_1', 'user04', 'Rất hay và ý nghĩa', '2023-04-15'), " +
-                        "('comment05', 'Lang_Tien_Ki_Dam_Chap_1', 'user05', 'Tôi thích truyện này', '2024-05-15')";
+                String insertComment = "INSERT INTO comment (idComment, idTruyen, idUser, noiDungBinhLuan, thoiGianBinhLuan) VALUES " +
+                        "('comment01', 'truyen01', 'user01', 'Hay quá!', '2020-01-15'), " +
+                        "('comment02', 'truyen01', 'user02', 'Rất hấp dẫn!', '2021-02-15'), " +
+                        "('comment03', 'truyen02', 'user03', 'Tác phẩm xuất sắc', '2022-03-15'), " +
+                        "('comment04', 'truyen03', 'user04', 'Rất hay và ý nghĩa', '2023-04-15'), " +
+                        "('comment05', 'truyen04', 'user05', 'Tôi thích truyện này', '2024-05-15')";
                 db.execSQL(insertComment);
             }
 
@@ -581,6 +588,62 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
                 "GROUP BY t.idTruyen " +
                 "ORDER BY tongSoLanDoc DESC";
         return db.rawQuery(query, new String[]{nam});
+    }
+
+    public Cursor getThongTinTruyenVaChapter(SQLiteDatabase db, String idTruyen) {
+        String query = "SELECT t.*, c.idChapter, c.chuongSo, c.ngayPhatHanh " +
+                "FROM truyen t " +
+                "LEFT JOIN chuong_truyen c ON t.idTruyen = c.idTruyen " +
+                "WHERE t.idTruyen = ? " +
+                "ORDER BY c.chuongSo ASC";
+        return db.rawQuery(query, new String[]{idTruyen});
+    }
+    public Cursor getTagForTruyen(SQLiteDatabase db, String idTruyen) {
+        String query = "SELECT ta.tenTag " +
+                "FROM truyen_address ta " +
+                "WHERE ta.idTruyen = ?";
+        return db.rawQuery(query, new String[]{idTruyen});
+    }
+
+    public Cursor getCommentsWithUserNamesByTruyen(SQLiteDatabase db, String idTruyen) {
+        String query = "SELECT c.idComment, c.noiDungBinhLuan, c.thoiGianBinhLuan, u.idUser, u.tenUser " +
+                "FROM comment c " +
+                "INNER JOIN nguoi_dung u ON c.idUser = u.idUser " +
+                "WHERE c.idTruyen = ? " +
+                "ORDER BY c.thoiGianBinhLuan DESC"; // Sắp xếp theo thời gian bình luận (mới nhất trước)
+        return db.rawQuery(query, new String[]{idTruyen});
+    }
+
+    public void themBinhLuanMoi(String idTruyen, String noiDungBinhLuan) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Tạo ID cho bình luận mới
+        String idComment = "comment" + System.currentTimeMillis();
+
+        // Thời gian hiện tại
+        @SuppressLint("SimpleDateFormat")
+        String thoiGianBinhLuan = new java.text.SimpleDateFormat("yyyy-MM-dd")
+                .format(new java.util.Date());
+
+        // ID người dùng mặc định
+        String idUser = "demoUser";
+        String tenUser = "Demo";
+
+        // Thêm dữ liệu vào bảng comment
+        ContentValues values = new ContentValues();
+        values.put("idComment", idComment);
+        values.put("idTruyen", idTruyen);
+        values.put("idUser", idUser);
+        values.put("noiDungBinhLuan", noiDungBinhLuan);
+        values.put("thoiGianBinhLuan", thoiGianBinhLuan);
+
+        long result = db.insert("comment", null, values);
+        if (result == -1) {
+            Log.e("InsertComment", "Lỗi khi thêm bình luận");
+        } else {
+            Log.d("InsertComment", "Thêm bình luận thành công");
+        }
+        db.close();
     }
 
 }

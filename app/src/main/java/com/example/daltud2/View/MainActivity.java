@@ -3,45 +3,33 @@ package com.example.daltud2.View;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daltud2.Control.ComicAdapter;
 import com.example.daltud2.Control.DataBaseSQLLite;
 import com.example.daltud2.Control.bodyView;
-import com.example.daltud2.LoginActivity;
 import com.example.daltud2.Control.HeaderView;
-import com.example.daltud2.Model.Comic;
-import com.example.daltud2.Model.NguoiDung;
+import com.example.daltud2.Model.ChuongTruyen;
+import com.example.daltud2.Model.Comment;
 import com.example.daltud2.Model.Truyen;
+import com.example.daltud2.Model.TruyenAddress;
 import com.example.daltud2.R;
-import com.example.daltud2.RegisterActivity;
-import android.animation.ObjectAnimator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -60,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout pageNumbersLayout;
     private LinearLayout  body;
     private RecyclerView ListComic;
+
+
     //endregion
 
     @Override
@@ -102,7 +92,14 @@ public class MainActivity extends AppCompatActivity {
                  isNotWhite = !isNotWhite;
              }
 
+
+            @Override
+            public Truyen getOneComic() {
+                return getThongTinTruyen("truyen01");
+            }
+
         });
+
 
         bodyViewInstance.setDataProvider(new bodyView.dataProvide() {
             @Override
@@ -151,6 +148,94 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Truyen Count", "Total Truyen: " + truyenList.size());
         }
     }
+    private Truyen getThongTinTruyen(String idTruyen) {
+        if (dataBaseSQLLite == null) {
+            dataBaseSQLLite = new DataBaseSQLLite(this);
+        }
+        SQLiteDatabase db = dataBaseSQLLite.getReadableDatabase();
+        Truyen truyen = null;
+
+        // Lấy thông tin cơ bản của truyện và chương
+        Cursor cursor = dataBaseSQLLite.getThongTinTruyenVaChapter(db, idTruyen);
+        List<ChuongTruyen> chuongTruyenList = new ArrayList<>();
+
+        if (cursor != null) {
+            boolean isFirstRow = true;
+            while (cursor.moveToNext()) {
+                if (isFirstRow) {
+                    // Lấy thông tin cơ bản của truyện
+                    @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
+                    @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
+                    @SuppressLint("Range") int luotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
+                    @SuppressLint("Range") int luotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
+                    @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+                    @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
+                    @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
+
+                    truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+                    isFirstRow = false;
+                }
+
+                // Lấy thông tin chương
+                @SuppressLint("Range") String idChapter = cursor.getString(cursor.getColumnIndex("idChapter"));
+                @SuppressLint("Range") int chuongSo = cursor.getInt(cursor.getColumnIndex("chuongSo"));
+                @SuppressLint("Range") String ngayPhatHanhChapter = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+
+                if (idChapter != null) {
+                    ChuongTruyen chuongTruyen = new ChuongTruyen(idChapter, idTruyen, chuongSo, ngayPhatHanhChapter);
+                    if (!chuongTruyenList.contains(chuongTruyen)) { // Kiểm tra trùng lặp
+                        chuongTruyenList.add(chuongTruyen);
+                    }
+                }
+            }
+            cursor.close();
+        }
+
+        // Lấy danh sách tag của truyện
+        Cursor tagCursor = dataBaseSQLLite.getTagForTruyen(db, idTruyen);
+        List<TruyenAddress> tagList = new ArrayList<>();
+        if (tagCursor != null) {
+            while (tagCursor.moveToNext()) {
+                @SuppressLint("Range") String tenTag = tagCursor.getString(tagCursor.getColumnIndex("tenTag"));
+                TruyenAddress truyenAddress = new TruyenAddress(idTruyen, tenTag);
+                if (!tagList.contains(truyenAddress)) { // Kiểm tra trùng lặp
+                    tagList.add(truyenAddress);
+                }
+            }
+            tagCursor.close();
+        }
+
+        // Lấy danh sách bình luận
+        Cursor commentCursor = dataBaseSQLLite.getCommentsWithUserNamesByTruyen(db, idTruyen);
+        List<Comment> commentList = new ArrayList<>();
+        if (commentCursor != null) {
+            while (commentCursor.moveToNext()) {
+                @SuppressLint("Range") String idComment = commentCursor.getString(commentCursor.getColumnIndex("idComment"));
+                @SuppressLint("Range") String idUser = commentCursor.getString(commentCursor.getColumnIndex("idUser"));
+                @SuppressLint("Range") String tenUser = commentCursor.getString(commentCursor.getColumnIndex("tenUser"));
+                @SuppressLint("Range") String noiDungBinhLuan = commentCursor.getString(commentCursor.getColumnIndex("noiDungBinhLuan"));
+                @SuppressLint("Range") String thoiGianBinhLuan = commentCursor.getString(commentCursor.getColumnIndex("thoiGianBinhLuan"));
+
+                Comment comment = new Comment(idComment, idTruyen, idUser, noiDungBinhLuan, thoiGianBinhLuan, tenUser);
+                commentList.add(comment);
+            }
+            commentCursor.close();
+        }
+
+        // Gán danh sách chương, tag và bình luận vào đối tượng `Truyen`
+        if (truyen != null) {
+            truyen.setDanhSachChuong(chuongTruyenList);
+            truyen.setTagList(tagList);
+            truyen.setCommentList(commentList);
+        }
+
+        db.close();
+        return truyen;
+    }
+
+
+
+
 
     private void sortTimeComics() {
         truyenList.sort((truyen1, truyen2) -> truyen2.getNgayPhatHanh().compareTo(truyen1.getNgayPhatHanh()));
@@ -192,7 +277,31 @@ public class MainActivity extends AppCompatActivity {
         createListComics(20);
     }
 
+    private void openThongTinTruyen(String idTruyen) {
+        // Lấy thông tin truyện
+        Truyen truyen = getThongTinTruyen(idTruyen); // Phương thức đã có
+
+        if (truyen != null) {
+            // Tạo Intent để mở `ThongTinTruyen`
+            Intent intent = new Intent(MainActivity.this, ThongTinTruyen.class);
+
+            // Truyền dữ liệu truyện qua Intent
+            intent.putExtra("truyen", (CharSequence) truyen);
+
+            // Truyền danh sách chương qua Intent
+            ArrayList<ChuongTruyen> danhSachChuong = new ArrayList<>(truyen.getDanhSachChuong());
+            intent.putExtra("danhSachChuong", danhSachChuong);
+
+            // Khởi chạy Activity
+            startActivity(intent);
+        } else {
+            Log.e("MainActivity", "Không tìm thấy thông tin truyện với ID: " + idTruyen);
+        }
+    }
+
     //endregion
+
+
 }
 
 

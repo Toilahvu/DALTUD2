@@ -1,6 +1,8 @@
 package com.example.daltud2.Model;
 
-public class ChuongTruyen {
+import java.io.Serializable;
+
+public class ChuongTruyen implements Serializable {
     private String idChapter;
     private String idTruyen;
     private int chuongSo;
@@ -12,6 +14,7 @@ public class ChuongTruyen {
         this.chuongSo = chuongSo;
         this.ngayPhatHanh = ngayPhatHanh;
     }
+
 
     // Getter và Setter
     public String getIdChapter() {

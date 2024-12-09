@@ -1,11 +1,14 @@
 package com.example.daltud2.Control;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -21,13 +24,21 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daltud2.LoginActivity;
+import com.example.daltud2.Model.ChuongTruyen;
+import com.example.daltud2.Model.Comment;
+import com.example.daltud2.Model.Truyen;
+import com.example.daltud2.Model.TruyenAddress;
 import com.example.daltud2.R;
 import com.example.daltud2.RegisterActivity;
 import com.example.daltud2.View.MainActivity;
+import com.example.daltud2.View.ThongTinTruyen;
 import com.example.daltud2.View.searchByRank;
 import com.example.daltud2.View.searchComics;
 import com.example.daltud2.View.searchComicsByTag;
 import com.example.daltud2.View.user_Monitor_Comics;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HeaderView extends LinearLayout {
 
@@ -46,6 +57,10 @@ public class HeaderView extends LinearLayout {
     public HeaderView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
+    }
+
+    public interface getData {
+        Truyen getOneComic();
     }
 
     private void init(Context context) {
@@ -87,8 +102,31 @@ public class HeaderView extends LinearLayout {
         btnDN.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), RegisterActivity.class);
-                getContext().startActivity(intent);
+                Truyen truyen = listener.getOneComic();
+
+                if (truyen != null) {
+                    // Tạo Intent để mở `ThongTinTruyen`
+                    Intent intent = new Intent(getContext(), ThongTinTruyen.class);
+
+                    // Truyền dữ liệu truyện qua Intent
+                    intent.putExtra("truyen", truyen);
+
+                    // Truyền danh sách chương qua Intent
+                    ArrayList<ChuongTruyen> danhSachChuong = new ArrayList<>(truyen.getDanhSachChuong());
+                    intent.putExtra("danhSachChuong", danhSachChuong);
+
+                    // Truyền danh sách tag qua Intent
+                    ArrayList<TruyenAddress> danhSachTag = new ArrayList<>(truyen.getTagList());
+                    intent.putExtra("danhSachTag", danhSachTag);
+
+                    //Truyền danh sách comment qua Intent
+                    ArrayList<Comment> danhSachComment = new ArrayList<>(truyen.getCommentList());
+                    intent.putExtra("danhSachComment", danhSachComment);
+                    // Khởi chạy Activity
+                    getContext().startActivity(intent);
+                } else {
+                    Log.e("MainActivity", "Không tìm thấy thông tin truyện với ID: ");
+                }
             }
         });
 
@@ -186,5 +224,8 @@ public class HeaderView extends LinearLayout {
     // Interface để định nghĩa các sự kiện
     public interface HeaderListener {
         void onUIChangeRequested();
+        //void onBtnDNRequest();
+        Truyen getOneComic();
     }
+
 }

@@ -191,6 +191,4 @@ public class bodyView extends LinearLayout {
 
 
 
-
-
 }
