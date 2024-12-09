@@ -74,13 +74,22 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        loginButton.setOnClickListener{
-            var email = emailEditText.text.toString().trim()
-            var password = passwordEditText.text.toString().trim()
+        loginButton.setOnClickListener {
+            val email = emailEditText.text.toString().trim()
+            val password = passwordEditText.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Vui lòng điền đầy đủ thông tin", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
+            }
+
+            // Kiểm tra nếu email và password là "admin"
+            if (email == "admin" && password == "admin") {
+                Toast.makeText(this, "Chào mừng Admin", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, AdminActivity::class.java)  // Chuyển tới AdminActivity
+                startActivity(intent)
+                finish() // Kết thúc Activity hiện tại nếu không cần quay lại
+                return@setOnClickListener // Thoát khỏi hàm sau khi chuyển trang
             }
 
             // Mở kết nối đến cơ sở dữ liệu
@@ -93,15 +102,16 @@ class LoginActivity : AppCompatActivity() {
             if (user != null) {
                 // Đăng nhập thành công
                 Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
-//                val intent = Intent(this, MainActivity::class.java)  // Chuyển tới MainActivity
-//                startActivity(intent)
-//                finish()
+                val intent = Intent(this, MainActivity::class.java)  // Chuyển tới MainActivity
+                startActivity(intent)
+                finish()
             } else {
                 // Đăng nhập thất bại
                 Toast.makeText(this, "Sai email hoặc mật khẩu", Toast.LENGTH_SHORT).show()
-                Log.d("Account", "Email: " + email + " Pass: " + password)
+                Log.d("Account", "Email: $email Pass: $password")
             }
         }
+
         logo.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
