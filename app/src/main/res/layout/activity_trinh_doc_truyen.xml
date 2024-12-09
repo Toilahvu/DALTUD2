@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1C1C1E"
+    tools:context=".View.TrinhDocTruyen">
+
+    <com.example.daltud2.Control.HeaderView
+        android:id="@+id/headerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+    </com.example.daltud2.Control.HeaderView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvDuongDanHienTai"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="@color/white"
+            android:textSize="15dp" />
+
+        <TextView
+            android:id="@+id/tvTuaDe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textColor="@color/white"
+            android:textSize="15dp" />
+    </LinearLayout>
+
+    <include
+        layout="@layout/iteam_chuyen_trang_truyen"
+        android:id="@+id/chuyenTrangTruyen">
+    </include>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvImgTruyen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <include
+        android:id="@+id/chuyenTrangTruyen"
+        layout="@layout/iteam_chuyen_trang_truyen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </include>
+
+    <include
+        layout="@layout/binh_luan_truyen"
+        android:id="@+id/binhLuanTruyen" />
+</LinearLayout>

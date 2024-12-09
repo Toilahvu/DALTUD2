@@ -1,23 +1,14 @@
 package com.example.daltud2.Model;
 
-public class TruyenAddress {
-    private String idTruyenAddress;
+import java.io.Serializable;
+
+public class TruyenAddress implements Serializable {
     private String idTruyen;
     private String tenTag;
 
-    public TruyenAddress(String idTruyenAddress, String idTruyen, String tenTag) {
-        this.idTruyenAddress = idTruyenAddress;
+    public TruyenAddress(String idTruyen, String tenTag) {
         this.idTruyen = idTruyen;
         this.tenTag = tenTag;
-    }
-
-    // Getter và Setter
-    public String getIdTruyenAddress() {
-        return idTruyenAddress;
-    }
-
-    public void setIdTruyenAddress(String idTruyenAddress) {
-        this.idTruyenAddress = idTruyenAddress;
     }
 
     public String getIdTruyen() {
@@ -35,5 +26,9 @@ public class TruyenAddress {
     public void setTenTag(String tenTag) {
         this.tenTag = tenTag;
     }
-}
 
+    @Override
+    public String toString() {
+        return tenTag; // Trả về tên tag để hiển thị
+    }
+}

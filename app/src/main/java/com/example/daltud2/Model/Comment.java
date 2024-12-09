@@ -1,18 +1,22 @@
 package com.example.daltud2.Model;
 
-public class Comment {
+import java.io.Serializable;
+
+public class Comment implements Serializable {
     private String idComment;
-    private String idChapter;
+    private String idTruyen;
     private String idUser;
+    private String nameUser;
     private String noiDungBinhLuan;
     private String thoiGianBinhLuan;
 
-    public Comment(String idComment, String idChapter, String idUser, String noiDungBinhLuan, String thoiGianBinhLuan) {
+    public Comment(String idComment, String idTruyen, String idUser, String noiDungBinhLuan, String thoiGianBinhLuan, String nameUser) {
         this.idComment = idComment;
-        this.idChapter = idChapter;
+        this.idTruyen = idTruyen;
         this.idUser = idUser;
         this.noiDungBinhLuan = noiDungBinhLuan;
         this.thoiGianBinhLuan = thoiGianBinhLuan;
+        this.nameUser = nameUser;
     }
 
     // Getter và Setter
@@ -24,12 +28,12 @@ public class Comment {
         this.idComment = idComment;
     }
 
-    public String getIdChapter() {
-        return idChapter;
+    public String getIdTruyen() {
+        return idTruyen;
     }
 
-    public void setIdChapter(String idChapter) {
-        this.idChapter = idChapter;
+    public void setIdTruyen(String idChapter) {
+        this.idTruyen = idChapter;
     }
 
     public String getIdUser() {
@@ -54,6 +58,12 @@ public class Comment {
 
     public void setThoiGianBinhLuan(String thoiGianBinhLuan) {
         this.thoiGianBinhLuan = thoiGianBinhLuan;
+    }
+    public String getNameUser(){
+        return nameUser;
+    }
+    public void setNameUser(String nameUser){
+        this.nameUser = nameUser;
     }
 }
 

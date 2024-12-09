@@ -1,7 +1,9 @@
 package com.example.daltud2.View;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +27,7 @@ import com.example.daltud2.Control.DataBaseSQLLite;
 import com.example.daltud2.Control.GenericCustomSpinnerAdapter;
 import com.example.daltud2.Control.HeaderView;
 import com.example.daltud2.Control.bodyView;
+import com.example.daltud2.Model.ChuongTruyen;
 import com.example.daltud2.Model.Comic;
 import com.example.daltud2.Model.Truyen;
 import com.example.daltud2.Model.tagComics;
@@ -112,6 +115,12 @@ public class searchByRank extends AppCompatActivity {
                 sortRankpinner.invalidate();
 
             }
+
+            @Override
+            public Truyen getOneComic() {
+                return getThongTinTruyen("truyen01");
+            }
+
         });
 
         sortRankpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -305,6 +314,54 @@ public class searchByRank extends AppCompatActivity {
         }
         createListComics(20,listTruyen);
 
+    }
+
+    private Truyen getThongTinTruyen(String idTruyen) {
+        if (dataBaseSQLLite == null) {
+            dataBaseSQLLite = new DataBaseSQLLite(this);
+        }
+        SQLiteDatabase db = dataBaseSQLLite.getReadableDatabase();
+
+        Cursor cursor = dataBaseSQLLite.getThongTinTruyenVaChapter(db, idTruyen);
+        Truyen truyen = null; // Đối tượng Truyen để lưu thông tin
+        List<ChuongTruyen> chuongTruyenList = new ArrayList<>(); // Danh sách các chương của truyện
+
+        if (cursor != null) {
+            boolean isFirstRow = true; // Kiểm tra dòng đầu tiên (thông tin truyện)
+            while (cursor.moveToNext()) {
+                if (isFirstRow) {
+                    // Lấy thông tin truyện (chỉ lấy 1 lần ở dòng đầu tiên)
+                    @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
+                    @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
+                    @SuppressLint("Range") int luotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
+                    @SuppressLint("Range") int luotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
+                    @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+                    @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
+                    @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
+
+                    // Tạo đối tượng Truyen
+                    truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+
+                    isFirstRow = false; // Đánh dấu đã xử lý thông tin truyện
+                }
+
+                // Lấy thông tin chương (các dòng tiếp theo)
+                @SuppressLint("Range") String idChapter = cursor.getString(cursor.getColumnIndex("idChapter"));
+                @SuppressLint("Range") int chuongSo = cursor.getInt(cursor.getColumnIndex("chuongSo"));
+                @SuppressLint("Range") String ngayPhatHanhChapter = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+
+                // Tạo đối tượng ChuongTruyen và thêm vào danh sách
+                ChuongTruyen chuongTruyen = new ChuongTruyen(idChapter, idTruyen, chuongSo, ngayPhatHanhChapter);
+                chuongTruyenList.add(chuongTruyen);
+            }
+            cursor.close();
+        } else {
+            Log.e("ThongTinTruyen", "Không tìm thấy thông tin cho truyện với ID: " + idTruyen);
+        }
+
+        db.close();
+
+        return truyen;
     }
 
     //endregion

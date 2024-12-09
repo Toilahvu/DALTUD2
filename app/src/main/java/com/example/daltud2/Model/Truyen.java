@@ -1,6 +1,9 @@
 package com.example.daltud2.Model;
 
-public class Truyen {
+import java.io.Serializable;
+import java.util.List;
+
+public class Truyen implements Serializable {
     private String idTruyen;
     private String tenTruyen;
     private String tenTacGia;
@@ -9,7 +12,9 @@ public class Truyen {
     private String ngayPhatHanh;
     private String moTaTruyen;
     private String urlAnhBia;
-
+    private List<ChuongTruyen> danhSachChuong;
+    private List<TruyenAddress> tagList; // Danh sách tag
+    private  List<Comment> commentList;
 
     public Truyen(String idTruyen, String tenTruyen, String tenTacGia,int soLuotXem,int soLuotTheoDoi , String ngayPhatHanh, String moTaTruyen, String urlAnhBia) {
         this.idTruyen = idTruyen;
@@ -94,5 +99,32 @@ public class Truyen {
 
     public void setUrlAnhBia(String urlAnhBia) {
         this.urlAnhBia = urlAnhBia;
+    }
+
+    // Getter và Setter cho danh sách chương
+    public List<ChuongTruyen> getDanhSachChuong() {
+        return danhSachChuong;
+    }
+
+    public void setDanhSachChuong(List<ChuongTruyen> danhSachChuong) {
+        this.danhSachChuong = danhSachChuong;
+    }
+
+    // Getter và Setter cho tagList
+    public List<TruyenAddress> getTagList() {
+        return tagList;
+    }
+
+    public void setTagList(List<TruyenAddress> tagList) {
+        this.tagList = tagList;
+    }
+
+    // Getter và Setter cho commnetList
+    public List<Comment> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<Comment> commentList) {
+        this.commentList = commentList;
     }
 }
