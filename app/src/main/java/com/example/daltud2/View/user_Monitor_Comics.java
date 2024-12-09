@@ -101,6 +101,8 @@ public class user_Monitor_Comics extends AppCompatActivity {
                 return pageDataList;
             }
         });
+
+        bodyViewInstance.setFragmentManager(getSupportFragmentManager());
     }
 
     //region methods

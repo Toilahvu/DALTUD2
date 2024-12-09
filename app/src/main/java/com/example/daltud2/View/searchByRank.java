@@ -153,6 +153,7 @@ public class searchByRank extends AppCompatActivity {
                 return pageDataList;
             }
         });
+        bodyView.setFragmentManager(getSupportFragmentManager());
 
 
     }

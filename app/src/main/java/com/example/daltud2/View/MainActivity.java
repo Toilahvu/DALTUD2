@@ -2,13 +2,22 @@ package com.example.daltud2.View;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,6 +41,7 @@ import com.example.daltud2.R;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class MainActivity extends AppCompatActivity {
 
     //region Variables
@@ -50,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView ListComic;
 
 
+    private ImageView notificationButton;
+
     //endregion
 
     @Override
@@ -63,6 +75,19 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        // Kiểm tra nếu cần hiển thị popup
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        boolean showPopup = prefs.getBoolean("showPopup", true);
+
+        if (showPopup) {
+            Message messageFragment = Message.newInstance("Thông Báo Mới Nhất");
+            messageFragment.show(getSupportFragmentManager(), "MessageDialog");
+
+            // Cập nhật cờ để lần sau không hiển thị nữa
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("showPopup", false);
+            editor.apply();
+        }
         //region Initial Setup
         declareVal();
         dataBaseSQLLite = new DataBaseSQLLite(this);
@@ -80,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                      btnBackwardFast.setColorFilter(Color.BLACK);
                      btnForwardStep.setColorFilter(Color.BLACK);
                      btnBackwardStep.setColorFilter(Color.BLACK);
+                     notificationButton.setColorFilter(Color.BLACK);
                  }else {
                      ListComic.setBackgroundColor(Color.parseColor("#18191A"));
                      tv4.setTextColor(Color.parseColor("#FFC107"));
@@ -88,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                      btnBackwardFast.setColorFilter(Color.WHITE);
                      btnForwardStep.setColorFilter(Color.WHITE);
                      btnBackwardStep.setColorFilter(Color.WHITE);
+                     notificationButton.setColorFilter(Color.WHITE);
                  }
                  isNotWhite = !isNotWhite;
              }
@@ -107,6 +134,9 @@ public class MainActivity extends AppCompatActivity {
                 return pageDataList;
             }
         });
+
+        bodyViewInstance.setFragmentManager(getSupportFragmentManager());
+
     }
 
     //region methods
@@ -121,13 +151,15 @@ public class MainActivity extends AppCompatActivity {
         body = findViewById(R.id.body);
         btnForwardFast = findViewById(R.id.btnForwardFast);
         btnBackwardFast = findViewById(R.id.btnBackwardFast);
+        notificationButton = findViewById(R.id.notification_button);
+
     }
     //endregion
 
     //region Database
     private void getAllruyen() {
         if (dataBaseSQLLite == null) {
-            dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 1);
+            dataBaseSQLLite = new DataBaseSQLLite(this, null, null, 7);
         }
         Cursor cursor = dataBaseSQLLite.getAllTruyen(dataBaseSQLLite.getReadableDatabase());
         if (cursor != null) {

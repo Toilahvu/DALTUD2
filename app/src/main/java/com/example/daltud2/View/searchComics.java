@@ -111,6 +111,7 @@ public class searchComics extends AppCompatActivity {
                 return pageDataList;
             }
         });
+        bodyViewByTag.setFragmentManager(getSupportFragmentManager());
     }
 
     private void declareVal() {
