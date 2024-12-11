@@ -130,10 +130,6 @@ public class searchComicsByTag extends AppCompatActivity {
                 spinnerSort.invalidate();
             }
 
-            @Override
-            public Truyen getOneComic() {
-                return getThongTinTruyen("truyen01");
-            }
         });
 
         bodyViewByTag.setDataProvider(new bodyView.dataProvide() {

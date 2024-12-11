@@ -89,10 +89,6 @@ public class user_Monitor_Comics extends AppCompatActivity {
                 isNotWhite = !isNotWhite;
             }
 
-            @Override
-            public Truyen getOneComic() {
-                return getThongTinTruyen("truyen01");
-            }
         });
 
         bodyViewInstance.setDataProvider(new bodyView.dataProvide() {

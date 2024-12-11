@@ -57,9 +57,8 @@ public class bodyView extends LinearLayout {
     public void setDataProvider(dataProvide provider) {
         this.provider = provider;
         initData();
-//        getDataGV();
+        getDataGV();
     }
-
 
     private void initData() {
         if (provider != null) {
@@ -93,14 +92,12 @@ public class bodyView extends LinearLayout {
         setupPageNavigation();
     }
 
-
     public void setFragmentManager(FragmentManager fragmentManager) {
         this.fragmentManager = fragmentManager;
         if (notificationButton != null) {
             setupNotificationButton();
         }
     }
-
 
     private void setupNotificationButton() {
         notificationButton.setOnClickListener(view -> {

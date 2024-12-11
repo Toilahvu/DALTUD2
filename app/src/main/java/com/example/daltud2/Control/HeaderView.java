@@ -59,9 +59,7 @@ public class HeaderView extends LinearLayout {
         init(context);
     }
 
-    public interface getData {
-        Truyen getOneComic();
-    }
+
 
     private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.header, this, true);
@@ -102,31 +100,8 @@ public class HeaderView extends LinearLayout {
         btnDN.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Truyen truyen = listener.getOneComic();
-
-                if (truyen != null) {
-                    // Tạo Intent để mở `ThongTinTruyen`
-                    Intent intent = new Intent(getContext(), ThongTinTruyen.class);
-
-                    // Truyền dữ liệu truyện qua Intent
-                    intent.putExtra("truyen", truyen);
-
-                    // Truyền danh sách chương qua Intent
-                    ArrayList<ChuongTruyen> danhSachChuong = new ArrayList<>(truyen.getDanhSachChuong());
-                    intent.putExtra("danhSachChuong", danhSachChuong);
-
-                    // Truyền danh sách tag qua Intent
-                    ArrayList<TruyenAddress> danhSachTag = new ArrayList<>(truyen.getTagList());
-                    intent.putExtra("danhSachTag", danhSachTag);
-
-                    //Truyền danh sách comment qua Intent
-                    ArrayList<Comment> danhSachComment = new ArrayList<>(truyen.getCommentList());
-                    intent.putExtra("danhSachComment", danhSachComment);
-                    // Khởi chạy Activity
-                    getContext().startActivity(intent);
-                } else {
-                    Log.e("MainActivity", "Không tìm thấy thông tin truyện với ID: ");
-                }
+                Intent intent = new Intent(getContext(), RegisterActivity.class);
+                getContext().startActivity(intent);
             }
         });
 
@@ -225,7 +200,6 @@ public class HeaderView extends LinearLayout {
     public interface HeaderListener {
         void onUIChangeRequested();
         //void onBtnDNRequest();
-        Truyen getOneComic();
     }
 
 }
