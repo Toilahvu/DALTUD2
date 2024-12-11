@@ -77,6 +77,7 @@ public class ThongTinTruyen extends AppCompatActivity {
         layoutManager.setJustifyContent(JustifyContent.FLEX_START);
         rvTag.setLayoutManager(layoutManager);
 
+
         // Khởi tạo Adapter cho rvTag
         tagAdapter = new TagAdapter(danhSachTag);
         rvTag.setAdapter(tagAdapter);
@@ -86,9 +87,7 @@ public class ThongTinTruyen extends AppCompatActivity {
        List<ChuongTruyen> listTruyen = truyen.getDanhSachChuong();
 
         // Thiết lập Adapter
-        listChapTruyenAdapter = new ChapTruyenAdapter(listTruyen);
-        rvDanhSachChapTruyen.setLayoutManager(new LinearLayoutManager(this));
-        rvDanhSachChapTruyen.setAdapter(listChapTruyenAdapter);
+
 
         if (truyen != null) {
             setThongTinTruyen(truyen); // Gắn thông tin truyện vào các TextView
@@ -325,11 +324,14 @@ public class ThongTinTruyen extends AppCompatActivity {
     private void initData(Truyen truyen) {
             List<ChuongTruyen> chapList = truyen.getDanhSachChuong();
             ChapTruyenAdapter chapTruyenAdapter = new ChapTruyenAdapter(chapList);
+            //listChapTruyenAdapter = new ChapTruyenAdapter(listTruyen);
+            rvDanhSachChapTruyen.setLayoutManager(new LinearLayoutManager(this));
+            rvDanhSachChapTruyen.setAdapter(chapTruyenAdapter);
 
             chapTruyenAdapter.setOnItemClickListener(idChapter -> {
                 Log.d("ThongTinTruyen", "Clicked chapter ID: " + idChapter);
                 // Tạo Intent để mở Activity khác
-                Intent intent = new Intent(this, TrinhDocTruyen.class);
+                Intent intent = new Intent(ThongTinTruyen.this, TrinhDocTruyen.class);
 
                 // Truyền idChapter qua Intent
                 intent.putExtra("idChapter", idChapter);

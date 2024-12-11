@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.daltud2.Control.ComicAdapter;
@@ -205,9 +206,21 @@ public class searchComicsByTag extends AppCompatActivity {
         sortComicsBy(type);
         createPageData(nums);
 
+
         //khi chạy lần đầu thì nó sẽ ko sự thay đổi , nên chắc chắn lỗi, làm thêm cái kiểm tra
-        if (ListComic.getAdapter() != null) {
-            ((ComicAdapter) ListComic.getAdapter()).updateData(pageDataList.get(0));
+//        if (ListComic.getAdapter() != null) {
+//            ((ComicAdapter) ListComic.getAdapter()).updateData(pageDataList.get(0));
+//        }
+
+        if (ListComic.getAdapter() == null) {
+            ListComic.setLayoutManager(new LinearLayoutManager(this)); // Vẫn cần set LayoutManager
+            ListComic.setAdapter(new ComicAdapter(pageDataList.isEmpty() ? new ArrayList<>() : pageDataList.get(0)));
+        } else {
+            if (!pageDataList.isEmpty()) {
+                ((ComicAdapter) ListComic.getAdapter()).updateData(pageDataList.get(0));
+            } else {
+                ((ComicAdapter) ListComic.getAdapter()).updateData(new ArrayList<>());
+            }
         }
     }
 
