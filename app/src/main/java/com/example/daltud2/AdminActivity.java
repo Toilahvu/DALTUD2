@@ -2,6 +2,7 @@ package com.example.daltud2;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class AdminActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigationView;
+    ImageButton imageButton;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -36,12 +38,21 @@ public class AdminActivity extends AppCompatActivity {
 
         // Gọi các phương thức xử lý
         addControls();
+        addDefaultFragment(); // Hiển thị mặc định QLTruyenFragment
         addEvents();
     }
 
     void addControls() {
         // Tìm đối tượng BottomNavigationView
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        imageButton = findViewById(R.id.logout);
+    }
+
+    void addDefaultFragment() {
+        // Hiển thị mặc định QLTruyenFragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new QLTruynFragment())
+                .commit();
     }
 
     void addEvents() {
@@ -76,6 +87,8 @@ public class AdminActivity extends AppCompatActivity {
                 }
             });
         }
-    }
 
+        // Xử lý sự kiện nút đăng xuất
+        imageButton.setOnClickListener(v -> finish());
+    }
 }
