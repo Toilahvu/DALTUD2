@@ -179,6 +179,45 @@ public class MainActivity extends AppCompatActivity {
         Log.d("SortTimeComics", "Danh sách đã được sắp xếp theo thời gian.");
     }
 
+    private void quickSortTimeComics(List<Truyen> list, int low, int high) {
+        if (low < high) {
+            int pi = partition(list, low, high);
+
+            quickSortTimeComics(list, low, pi - 1);
+            quickSortTimeComics(list, pi + 1, high);
+        }
+    }
+
+    private int partition(List<Truyen> list, int low, int high) {
+        Truyen pivot = list.get(high);
+        int i = (low - 1);
+
+        for (int j = low; j < high; j++) {
+            // So sánh ngày phát hành, xử lý trường hợp null
+            String dateJ = list.get(j).getNgayPhatHanh();
+            String datePivot = pivot.getNgayPhatHanh();
+
+            if ((dateJ != null && datePivot != null && dateJ.compareTo(datePivot) >= 0) ||
+                    (dateJ == null && datePivot != null) ||
+                    (dateJ == null && datePivot == null))
+            {
+                i++;
+
+                Truyen temp = list.get(i);
+                list.set(i, list.get(j));
+                list.set(j, temp);
+            }
+        }
+
+        Truyen temp = list.get(i + 1);
+        list.set(i + 1, list.get(high));
+        list.set(high, temp);
+
+        return i + 1;
+    }
+
+
+
     private void createListComics(int numItems) {
         pageDataList.clear();
         int startIndex = 0;
@@ -210,7 +249,9 @@ public class MainActivity extends AppCompatActivity {
     private void returnDataListPage(){
         getAllruyen();
         //createSampleComicsData(400);
-        sortTimeComics();
+        List<Truyen> sortedTruyenList = new ArrayList<>(truyenList);
+        quickSortTimeComics(truyenList, 0, truyenList.size() - 1);
+        //sortTimeComics();
         createListComics(20);
     }
 
