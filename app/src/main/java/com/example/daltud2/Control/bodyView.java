@@ -1,6 +1,7 @@
 package com.example.daltud2.Control;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -17,10 +18,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.daltud2.Model.ChuongTruyen;
 import com.example.daltud2.Model.Comic;
+import com.example.daltud2.Model.Comment;
 import com.example.daltud2.Model.Truyen;
+import com.example.daltud2.Model.TruyenAddress;
 import com.example.daltud2.R;
 import com.example.daltud2.View.Message;
+import com.example.daltud2.View.ThongTinTruyen;
 
 
 import java.util.ArrayList;
@@ -52,6 +57,7 @@ public class bodyView extends LinearLayout {
     public void setDataProvider(dataProvide provider) {
         this.provider = provider;
         initData();
+//        getDataGV();
     }
 
 
@@ -217,6 +223,30 @@ public class bodyView extends LinearLayout {
         });
     }
 
+    //them
+    private void getDataGV() {
+        if (provider != null) {
+            this.pageDataList = provider.getPageDataList();
+            this.maxPages = pageDataList.size();
 
+            if (!pageDataList.isEmpty()) {
+                adapter = new ComicAdapter(pageDataList.get(currentPage - 1));
 
+                // Lắng nghe sự kiện click từ Adapter
+                adapter.setOnItemClickListener(truyen -> {
+                    Intent intent = new Intent(getContext(), ThongTinTruyen.class);
+                    String truyenId = truyen.getIdTruyen(); // Lấy ID của Truyen
+                    intent.putExtra("TRUYEN_ID", truyenId); // Truyền ID qua Intent
+                    getContext().startActivity(intent); // Khởi chạy Activity
+                });
+
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+                ListComic.setLayoutManager(gridLayoutManager);
+                ListComic.setAdapter(adapter);
+            }
+
+            listPageComic();
+            updateNavigationButtons();
+        }
+    }
 }

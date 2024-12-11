@@ -122,9 +122,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public Truyen getOneComic() {
-                return getThongTinTruyen("truyen01");
+                String idTruyen = getIntent().getStringExtra("TRUYEN_ID");
+                return getThongTinTruyen(idTruyen);
             }
-
         });
 
 
@@ -264,10 +264,6 @@ public class MainActivity extends AppCompatActivity {
         db.close();
         return truyen;
     }
-
-
-
-
 
     private void sortTimeComics() {
         truyenList.sort((truyen1, truyen2) -> truyen2.getNgayPhatHanh().compareTo(truyen1.getNgayPhatHanh()));
