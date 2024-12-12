@@ -1,16 +1,19 @@
 package com.example.daltud2.Model;
 
-import android.text.SpannableString;
+import java.io.Serializable;
 
-public class User {
+public class User implements Serializable {
     private String name;
     private String email;
-    private String avatarUrl; // Có thể thêm trường khác nếu cần
-
+    private String avatarUrl;
     private String password;
 
-    // Constructor
-    public User(String name, String email, String avatarUrl) {
+    // Constructor mặc định
+    public User() {
+    }
+
+    // Constructor đầy đủ
+    public User(String name, String email, String avatarUrl, String password) {
         this.name = name;
         this.email = email;
         this.avatarUrl = avatarUrl;
@@ -41,10 +44,22 @@ public class User {
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
     }
+
     public String getPassword() {
         return password;
     }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    // Phương thức kiểm tra email hợp lệ
+    public boolean isValidEmail() {
+        return email != null && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    @Override
+    public String toString() {
+        return "User{name='" + name + "', email='" + email + "', avatarUrl='" + avatarUrl + "'}";
     }
 }

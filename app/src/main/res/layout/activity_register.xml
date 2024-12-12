@@ -93,15 +93,4 @@
             android:layout_marginBottom="24dp" />
     </LinearLayout>
 
-    <RadioButton
-        android:id="@+id/switchToLoginRadioButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Đăng nhập với chế độ admin"
-        android:textColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="50dp" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

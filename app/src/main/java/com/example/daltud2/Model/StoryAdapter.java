@@ -8,7 +8,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.daltud2.Model.Story;
 import com.example.daltud2.R;
 
 import java.util.List;
@@ -19,10 +18,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.StoryViewHol
     private final OnStoryClickListener listener;
 
     public interface OnStoryClickListener {
-        void onEditStory(int position, Story story);
-
-        void onEditStory(int position);
-
+        void onEditStory(Story story);
         void onDeleteStory(int position);
     }
 
@@ -66,7 +62,7 @@ public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.StoryViewHol
             tvTitle.setText(story.getTitle());
             tvAuthor.setText(story.getAuthor());
 
-            btnEdit.setOnClickListener(v -> listener.onEditStory(position, story));
+            btnEdit.setOnClickListener(v -> listener.onEditStory(story));
             btnDelete.setOnClickListener(v -> listener.onDeleteStory(position));
         }
     }

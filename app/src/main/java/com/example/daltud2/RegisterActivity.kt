@@ -17,8 +17,6 @@ import com.example.daltud2.Control.DataBaseSQLLite
 import com.example.daltud2.View.MainActivity
 
 class RegisterActivity : AppCompatActivity() {
-
-    private lateinit var radioButton: RadioButton
     private lateinit var dataBaseSQLLite: DataBaseSQLLite
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
@@ -44,7 +42,6 @@ class RegisterActivity : AppCompatActivity() {
         dataBaseSQLLite = DataBaseSQLLite(this)
     }
     private fun Control(){
-        radioButton = findViewById(R.id.switchToLoginRadioButton)
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         rewpasswordEditText = findViewById(R.id.rewpasswordEditText)
@@ -53,10 +50,6 @@ class RegisterActivity : AppCompatActivity() {
         dnbtn = findViewById(R.id.dnbtn)
     }
     private fun Events() {
-        radioButton.setOnClickListener {
-                val intent = Intent(this, AdminActivity::class.java)
-                startActivity(intent)
-        }
 
         resgisterButton.setOnClickListener {
             val email = emailEditText.text.toString().trim()

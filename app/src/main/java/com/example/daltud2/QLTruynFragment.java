@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +21,7 @@ import java.util.List;
 public class QLTruynFragment extends Fragment {
 
     private List<Story> storyList = new ArrayList<>();
-    private com.example.daltud2.Model.StoryAdapter adapter;
+    private StoryAdapter adapter;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,7 +33,6 @@ public class QLTruynFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Khởi tạo danh sách truyện
-        storyList = new ArrayList<>();
         storyList.add(new Story(1, "Truyện Mới 1", "Tác giả Mới 1"));
         storyList.add(new Story(2, "Truyện Mới 2", "Tác giả Mới 2"));
 
@@ -40,40 +40,37 @@ public class QLTruynFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewStories);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        adapter = new StoryAdapter(storyList, new com.example.daltud2.Model.StoryAdapter.OnStoryClickListener() {
+        adapter = new StoryAdapter(storyList, new StoryAdapter.OnStoryClickListener() {
             @Override
-            public void onEditStory(int position, Story story) {
+            public void onEditStory(Story story) {
+                // Tạo AddStoryFragment và truyền dữ liệu
+                AddStoryFragment addStoryFragment = new AddStoryFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("story", story);
+                addStoryFragment.setArguments(bundle);
 
-            }
-
-            @Override
-            public void onEditStory(int position) {
-                // Sửa truyện
-                editStory(position);
+                // Sử dụng FragmentTransaction để hiển thị AddStoryFragment
+                FragmentTransaction transaction = requireActivity().getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, addStoryFragment);
+                transaction.addToBackStack(null); // Quay lại QLTruyenFragment
+                transaction.commit();
             }
 
             @Override
             public void onDeleteStory(int position) {
-                // Xóa truyện
                 deleteStory(position);
             }
         });
         recyclerView.setAdapter(adapter);
 
-        // Nút thêm truyện
         view.findViewById(R.id.fab_add_story).setOnClickListener(v -> addStory());
     }
 
     private void addStory() {
         int id = storyList.size() + 1;
-        storyList.add(new Story(id, "Truyện mới " + id, "Tác giả mới " + id));
+        Story newStory = new Story(id, "Truyện mới " + id, "Tác giả mới " + id);
+        storyList.add(newStory);
         adapter.notifyItemInserted(storyList.size() - 1);
-    }
-
-    private void editStory(int position) {
-        Story story = storyList.get(position);
-        storyList.set(position, new Story(story.getId(), story.getTitle() + " (Đã sửa)", story.getAuthor() + " (Đã sửa)"));
-        adapter.notifyItemChanged(position);
     }
 
     private void deleteStory(int position) {

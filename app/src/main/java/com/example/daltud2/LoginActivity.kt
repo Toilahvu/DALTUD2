@@ -19,7 +19,6 @@ import com.example.daltud2.View.MainActivity
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var radioButton: RadioButton
     private lateinit var loginButton: Button
     private lateinit var emailEditText: EditText
     private lateinit var passwordEditText: EditText
@@ -48,7 +47,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun Control(){
-        radioButton = findViewById(R.id.switchToRegisterRadioButton)
         loginButton = findViewById(R.id.loginButton)
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
@@ -66,12 +64,6 @@ class LoginActivity : AppCompatActivity() {
                 .replace(R.id.main, forgotPasswordFragment)
                 .addToBackStack(null)
                 .commit()
-        }
-
-        // Xử lý sự kiện khi nhấn vào RadioButton
-        radioButton.setOnClickListener {
-            val intent = Intent(this, AdminActivity::class.java)
-            startActivity(intent)
         }
 
         loginButton.setOnClickListener {

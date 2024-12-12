@@ -40,7 +40,7 @@
 
     <include
         layout="@layout/iteam_chuyen_trang_truyen"
-        android:id="@+id/chuyenTrangTruyen">
+        android:id="@+id/chuyenTrangTruyen1">
     </include>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -49,7 +49,7 @@
         android:layout_height="wrap_content" />
 
     <include
-        android:id="@+id/chuyenTrangTruyen"
+        android:id="@+id/chuyenTrangTruyen2"
         layout="@layout/iteam_chuyen_trang_truyen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

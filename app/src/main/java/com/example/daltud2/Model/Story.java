@@ -1,12 +1,25 @@
 package com.example.daltud2.Model;
 
-public class Story {
+import java.io.Serializable;
+
+public class Story implements Serializable {
+    private int id;
     private String title;
     private String author;
 
-    public Story(int i, String title, String author) {
+    public Story(int id, String title, String author) {
+        this.id = id;
         this.title = title;
         this.author = author;
+    }
+
+    // Getter và Setter
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -23,9 +36,5 @@ public class Story {
 
     public void setAuthor(String author) {
         this.author = author;
-    }
-
-    public int getId() {
-        return 0;
     }
 }
