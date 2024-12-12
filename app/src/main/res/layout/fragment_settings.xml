@@ -24,6 +24,7 @@
 
     <!-- Thông tin ứng dụng -->
     <TextView
+        android:id="@+id/appVersionTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Thông tin ứng dụng"

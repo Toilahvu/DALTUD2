@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@android:color/white"> <!-- Nền của Fragment -->
 
     <!-- Phần trên cùng chứa hình ảnh và nút thay đổi hình ảnh -->
     <LinearLayout
@@ -68,14 +69,6 @@
             android:dividerHeight="1dp" />
 
         <!-- Nút xoá nhỏ ở góc phải -->
-        <Button
-            android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Xoá"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="8dp" />
 
         <!-- Nút back nhỏ ở góc trái -->
         <ImageButton
@@ -87,7 +80,8 @@
             android:contentDescription="Back Button"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"
+            android:background="@android:color/white" /> <!-- Nền giống Fragment -->
 
         <!-- Nút thêm chapter nhỏ -->
         <ImageButton
@@ -99,6 +93,7 @@
             android:contentDescription="Add Chapter Button"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"
+            android:background="@android:color/white" /> <!-- Nền giống Fragment -->
     </RelativeLayout>
 </LinearLayout>
