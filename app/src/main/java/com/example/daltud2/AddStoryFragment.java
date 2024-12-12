@@ -89,7 +89,16 @@ public class AddStoryFragment extends Fragment {
                     .setPositiveButton("Có", (dialog, which) -> {
                         // Nếu người dùng chọn "Có", xóa mục khỏi danh sách
                         chapterList.remove(position);
+
+                        // Cập nhật lại số thứ tự các chương
+                        for (int i = 0; i < chapterList.size(); i++) {
+                            chapterList.set(i, "Chapter " + (i + 1)); // Cập nhật lại số thứ tự
+                        }
+
+                        // Notify adapter cập nhật dữ liệu
                         adapter.notifyDataSetChanged();
+
+                        // Hiển thị thông báo xóa thành công
                         Toast.makeText(requireContext(), "Đã xóa " + chapter, Toast.LENGTH_SHORT).show();
                     })
                     .setNegativeButton("Không", (dialog, which) -> dialog.dismiss())
@@ -97,6 +106,7 @@ public class AddStoryFragment extends Fragment {
 
             return true;  // Trả về true để ngừng xử lý thêm sự kiện này
         });
+
     }
 
     // Nhận kết quả chọn hình ảnh từ thư viện
