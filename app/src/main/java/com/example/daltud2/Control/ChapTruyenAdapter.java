@@ -28,6 +28,15 @@ public class ChapTruyenAdapter extends RecyclerView.Adapter<ChapTruyenAdapter.My
         }
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(String idChapter);
+    }
+
+    private OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
 
     @NonNull
     @Override
@@ -45,6 +54,14 @@ public class ChapTruyenAdapter extends RecyclerView.Adapter<ChapTruyenAdapter.My
         // Gắn dữ liệu vào ViewHolder
         holder.tvChap.setText("Chapter " + chuongTruyen.getChuongSo());
         holder.tvNgayPhatHanh.setText(chuongTruyen.getNgayPhatHanh());
+
+        // Xử lý sự kiện click
+        holder.itemView.setOnClickListener(view -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(chuongTruyen.getIdChapter());
+                Log.d("ChapTruyenAdapter", "Clicked chapter: " + chuongTruyen.getIdChapter());
+            }
+        });
     }
 
     @Override
@@ -64,4 +81,6 @@ public class ChapTruyenAdapter extends RecyclerView.Adapter<ChapTruyenAdapter.My
             tvNgayPhatHanh = itemView.findViewById(R.id.tvNgayPhatHanh);
         }
     }
+
+
 }

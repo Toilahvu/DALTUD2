@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TagAdapter extends RecyclerView.Adapter<TagAdapter.MyViewHolder> {
-    private ArrayList<TruyenAddress> dataList;
+    private List<TruyenAddress> dataList;
 
-    public TagAdapter(ArrayList<TruyenAddress> dataList) {
+    public TagAdapter(List<TruyenAddress> dataList) {
         this.dataList = dataList;
     }
 

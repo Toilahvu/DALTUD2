@@ -1,7 +1,9 @@
 package com.example.daltud2.View;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -41,7 +43,9 @@ public class ThongTinTruyen extends AppCompatActivity {
     private RecyclerView rvTag, rvDanhSachChapTruyen, rvDanhSachComment;
     private EditText edtBinhLuan;
     private ImageView imgTruyen;
+    private DataBaseSQLLite dataBaseSQLLite;
     private RecyclerView.Adapter tagAdapter, listChapTruyenAdapter, CommentAdapter;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +58,18 @@ public class ThongTinTruyen extends AppCompatActivity {
             return insets;
         });
 
+        String idTruyen = getIntent().getStringExtra("TRUYEN_ID");
+        Truyen truyen = getThongTinTruyen(idTruyen);
+
         Controls();
-        Events();
+        Events(truyen);
+
+        initData(truyen);
 
         btnXemThem.setVisibility(View.GONE); // Ẩn hoàn toàn
 
         // Nhận dữ liệu từ Intent
-        ArrayList<TruyenAddress> danhSachTag = (ArrayList<TruyenAddress>) getIntent().getSerializableExtra("danhSachTag");
+        List<TruyenAddress> danhSachTag = truyen.getTagList();
 
         // Khởi tạo LayoutManager cho rvTag
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
@@ -68,43 +77,39 @@ public class ThongTinTruyen extends AppCompatActivity {
         layoutManager.setJustifyContent(JustifyContent.FLEX_START);
         rvTag.setLayoutManager(layoutManager);
 
+
         // Khởi tạo Adapter cho rvTag
         tagAdapter = new TagAdapter(danhSachTag);
         rvTag.setAdapter(tagAdapter);
 
 
         // Nhận danh sách chap từ Intent
-        List<ChuongTruyen> listTruyen = (ArrayList<ChuongTruyen>) getIntent().getSerializableExtra("danhSachChuong");
+       List<ChuongTruyen> listTruyen = truyen.getDanhSachChuong();
 
         // Thiết lập Adapter
-        listChapTruyenAdapter = new ChapTruyenAdapter(listTruyen);
-        rvDanhSachChapTruyen.setLayoutManager(new LinearLayoutManager(this));
-        rvDanhSachChapTruyen.setAdapter(listChapTruyenAdapter);
 
 
-        // Nhan ds info truyen
-        Truyen truyen = (Truyen) getIntent().getSerializableExtra("truyen");
         if (truyen != null) {
             setThongTinTruyen(truyen); // Gắn thông tin truyện vào các TextView
         }
 
 // Nhận danh sách bình luận từ Intent
-        ArrayList<Comment> listComment = (ArrayList<Comment>) getIntent().getSerializableExtra("danhSachComment");
+        List<Comment> listComment = truyen.getCommentList();
 
 // Kiểm tra danh sách bình luận không null
         if (listComment != null) {
             // Hiển thị tổng số bình luận
             tvLuotBinhLuan.setText("(" + listComment.size() + ")");
 
-            CommentAdapter commentAdapter = new CommentAdapter(this, listComment); // Truyền `this` làm Context
+            CommentAdapter = new CommentAdapter(this, listComment); // Truyền `this` làm Context
             rvDanhSachComment.setLayoutManager(new LinearLayoutManager(this));
-            rvDanhSachComment.setAdapter(commentAdapter);
+            rvDanhSachComment.setAdapter(CommentAdapter);
         } else {
             Log.e("ThongTinTruyen", "Danh sách bình luận bị null");
             tvLuotBinhLuan.setText("(0)");
         }
 
-        capNhatDanhSachBinhLuan();
+        capNhatDanhSachBinhLuan(truyen);
     }
 
     private void Controls() {
@@ -133,7 +138,7 @@ public class ThongTinTruyen extends AppCompatActivity {
         imgTruyen = findViewById(R.id.imgTruyen);
     }
 
-    private void Events() {
+    private void Events( Truyen truyen ) {
         btnDang.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,14 +149,13 @@ public class ThongTinTruyen extends AppCompatActivity {
                     return;
                 }
 
-                Truyen truyen = (Truyen) getIntent().getSerializableExtra("truyen");
                 if (truyen != null) {
                     DataBaseSQLLite dataBaseSQLLite = new DataBaseSQLLite(ThongTinTruyen.this);
                     dataBaseSQLLite.themBinhLuanMoi(truyen.getIdTruyen(), noiDungBinhLuan);
 
                     Toast.makeText(ThongTinTruyen.this, "Đã thêm bình luận thành công!", Toast.LENGTH_SHORT).show();
 
-                    capNhatDanhSachBinhLuan(); // Tải lại danh sách
+                    capNhatDanhSachBinhLuan(truyen ); // Tải lại danh sách
                     edtBinhLuan.setText(""); // Xóa nội dung nhập
                 } else {
                     Toast.makeText(ThongTinTruyen.this, "Không tìm thấy thông tin truyện", Toast.LENGTH_SHORT).show();
@@ -177,11 +181,10 @@ public class ThongTinTruyen extends AppCompatActivity {
         });
     }
 
-
-    private void capNhatDanhSachBinhLuan() {
+    private void capNhatDanhSachBinhLuan( Truyen truyen ) {
         DataBaseSQLLite dbHelper = new DataBaseSQLLite(this);
-        ArrayList<Comment> danhSachBinhLuan = new ArrayList<>();
-        Truyen truyen = (Truyen) getIntent().getSerializableExtra("truyen");
+        List<Comment> danhSachBinhLuan = new ArrayList<>();
+
 
         if (truyen == null) {
             Log.e("capNhatDanhSachBinhLuan", "Không tìm thấy thông tin truyện");
@@ -221,7 +224,6 @@ public class ThongTinTruyen extends AppCompatActivity {
         tvLuotBinhLuan.setText("(" + danhSachBinhLuan.size() + ")");
     }
 
-
     private void setThongTinTruyen(Truyen truyen) {
         tvTenTruyen.setText(truyen.getTenTruyen());
         tvTenTacGia.setText(truyen.getTenTacGia());
@@ -232,4 +234,113 @@ public class ThongTinTruyen extends AppCompatActivity {
         tvGioiThieu.setText(truyen.getMoTaTruyen());
         tvDuongDanHienTai.setText("Trang chủ > " + truyen.getTenTruyen());
     }
+
+    private Truyen getThongTinTruyen(String idTruyen) {
+        if (dataBaseSQLLite == null) {
+            dataBaseSQLLite = new DataBaseSQLLite(this);
+        }
+
+        SQLiteDatabase db = dataBaseSQLLite.getReadableDatabase();
+        Truyen truyen = null;
+
+        // Lấy thông tin cơ bản của truyện và chương
+        Cursor cursor = dataBaseSQLLite.getThongTinTruyenVaChapter(db, idTruyen);
+        List<ChuongTruyen> chuongTruyenList = new ArrayList<>();
+
+        if (cursor != null) {
+            boolean isFirstRow = true;
+            while (cursor.moveToNext()) {
+                if (isFirstRow) {
+                    // Lấy thông tin cơ bản của truyện
+                    @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
+                    @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
+                    @SuppressLint("Range") int luotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
+                    @SuppressLint("Range") int luotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
+                    @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+                    @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
+                    @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
+
+                    truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
+                    isFirstRow = false;
+                }
+
+                // Lấy thông tin chương
+                @SuppressLint("Range") String idChapter = cursor.getString(cursor.getColumnIndex("idChapter"));
+                @SuppressLint("Range") int chuongSo = cursor.getInt(cursor.getColumnIndex("chuongSo"));
+                @SuppressLint("Range") String ngayPhatHanhChapter = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
+
+                if (idChapter != null) {
+                    ChuongTruyen chuongTruyen = new ChuongTruyen(idChapter, idTruyen, chuongSo, ngayPhatHanhChapter);
+                    if (!chuongTruyenList.contains(chuongTruyen)) { // Kiểm tra trùng lặp
+                        chuongTruyenList.add(chuongTruyen);
+                    }
+                }
+            }
+            cursor.close();
+        }
+
+        // Lấy danh sách tag của truyện
+        Cursor tagCursor = dataBaseSQLLite.getTagForTruyen(db, idTruyen);
+        List<TruyenAddress> tagList = new ArrayList<>();
+        if (tagCursor != null) {
+            while (tagCursor.moveToNext()) {
+                @SuppressLint("Range") String tenTag = tagCursor.getString(tagCursor.getColumnIndex("tenTag"));
+                TruyenAddress truyenAddress = new TruyenAddress(idTruyen, tenTag);
+                if (!tagList.contains(truyenAddress)) { // Kiểm tra trùng lặp
+                    tagList.add(truyenAddress);
+                }
+            }
+            tagCursor.close();
+        }
+
+        // Lấy danh sách bình luận
+        Cursor commentCursor = dataBaseSQLLite.getCommentsWithUserNamesByTruyen(db, idTruyen);
+        List<Comment> commentList = new ArrayList<>();
+        if (commentCursor != null) {
+            while (commentCursor.moveToNext()) {
+                @SuppressLint("Range") String idComment = commentCursor.getString(commentCursor.getColumnIndex("idComment"));
+                @SuppressLint("Range") String idUser = commentCursor.getString(commentCursor.getColumnIndex("idUser"));
+                @SuppressLint("Range") String tenUser = commentCursor.getString(commentCursor.getColumnIndex("tenUser"));
+                @SuppressLint("Range") String noiDungBinhLuan = commentCursor.getString(commentCursor.getColumnIndex("noiDungBinhLuan"));
+                @SuppressLint("Range") String thoiGianBinhLuan = commentCursor.getString(commentCursor.getColumnIndex("thoiGianBinhLuan"));
+
+                Comment comment = new Comment(idComment, idTruyen, idUser, noiDungBinhLuan, thoiGianBinhLuan, tenUser);
+                commentList.add(comment);
+            }
+            commentCursor.close();
+        }
+
+        // Gán danh sách chương, tag và bình luận vào đối tượng `Truyen`
+        if (truyen != null) {
+            truyen.setDanhSachChuong(chuongTruyenList);
+            truyen.setTagList(tagList);
+            truyen.setCommentList(commentList);
+        }
+
+        db.close();
+        return truyen;
+    }
+
+    private void initData(Truyen truyen) {
+            List<ChuongTruyen> chapList = truyen.getDanhSachChuong();
+            ChapTruyenAdapter chapTruyenAdapter = new ChapTruyenAdapter(chapList);
+            //listChapTruyenAdapter = new ChapTruyenAdapter(listTruyen);
+            rvDanhSachChapTruyen.setLayoutManager(new LinearLayoutManager(this));
+            rvDanhSachChapTruyen.setAdapter(chapTruyenAdapter);
+
+            chapTruyenAdapter.setOnItemClickListener(idChapter -> {
+                Log.d("ThongTinTruyen", "Clicked chapter ID: " + idChapter);
+                // Tạo Intent để mở Activity khác
+                Intent intent = new Intent(ThongTinTruyen.this, TrinhDocTruyen.class);
+
+                // Truyền idChapter qua Intent
+                intent.putExtra("idChapter", idChapter);
+
+                // Khởi chạy Activity
+                startActivity(intent);
+            });
+
+            rvDanhSachChapTruyen.setAdapter(chapTruyenAdapter);
+    }
+
 }

@@ -651,5 +651,10 @@ public class DataBaseSQLLite extends SQLiteOpenHelper {
         return db.rawQuery(query, null);
     }
 
+    public Cursor getImagesByChapterId(SQLiteDatabase db, String idChapter) {
+        // Truy vấn tất cả các ảnh theo idChapter
+        String query = "SELECT urlAnh FROM anh_chuong WHERE idChapter = ?";
+        return db.rawQuery(query, new String[]{idChapter});
+    }
 
 }

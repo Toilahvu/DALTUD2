@@ -116,10 +116,7 @@ public class searchByRank extends AppCompatActivity {
 
             }
 
-            @Override
-            public Truyen getOneComic() {
-                return getThongTinTruyen("truyen01");
-            }
+
 
         });
 

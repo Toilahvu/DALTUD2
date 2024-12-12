@@ -32,9 +32,20 @@ public class ComicAdapter extends RecyclerView.Adapter<ComicAdapter.ComicViewHol
         }
     }
     private List<Truyen> comicList;
+    //them
+    private OnItemClickListener onItemClickListener;
 
     public ComicAdapter(List<Truyen> comicList) {
         this.comicList = comicList;
+    }
+
+    //them
+    public interface OnItemClickListener {
+        void onItemClick(Truyen truyen); // Hàm callback cho sự kiện click
+    }
+    //them
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
     }
 
     @NonNull
@@ -58,6 +69,13 @@ public class ComicAdapter extends RecyclerView.Adapter<ComicAdapter.ComicViewHol
         } else {
             holder.comicImage.setImageResource(R.drawable.logo);
         }
+        //them
+        // Gắn sự kiện click cho từng item
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(comic);
+            }
+        });
     }
 
     @Override

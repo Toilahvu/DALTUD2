@@ -99,10 +99,6 @@ public class searchComics extends AppCompatActivity {
                 isNotWhite = !isNotWhite;
             }
 
-            @Override
-            public Truyen getOneComic() {
-                return getThongTinTruyen("truyen01");
-            }
         });
 
         bodyViewByTag.setDataProvider(new bodyView.dataProvide() {

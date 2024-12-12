@@ -119,12 +119,6 @@ public class MainActivity extends AppCompatActivity {
                  isNotWhite = !isNotWhite;
              }
 
-
-            @Override
-            public Truyen getOneComic() {
-                return getThongTinTruyen("truyen01");
-            }
-
         });
 
 
@@ -136,7 +130,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         bodyViewInstance.setFragmentManager(getSupportFragmentManager());
-
     }
 
     //region methods
@@ -180,99 +173,50 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Truyen Count", "Total Truyen: " + truyenList.size());
         }
     }
-    private Truyen getThongTinTruyen(String idTruyen) {
-        if (dataBaseSQLLite == null) {
-            dataBaseSQLLite = new DataBaseSQLLite(this);
-        }
-        SQLiteDatabase db = dataBaseSQLLite.getReadableDatabase();
-        Truyen truyen = null;
-
-        // Lấy thông tin cơ bản của truyện và chương
-        Cursor cursor = dataBaseSQLLite.getThongTinTruyenVaChapter(db, idTruyen);
-        List<ChuongTruyen> chuongTruyenList = new ArrayList<>();
-
-        if (cursor != null) {
-            boolean isFirstRow = true;
-            while (cursor.moveToNext()) {
-                if (isFirstRow) {
-                    // Lấy thông tin cơ bản của truyện
-                    @SuppressLint("Range") String tenTruyen = cursor.getString(cursor.getColumnIndex("tenTruyen"));
-                    @SuppressLint("Range") String tenTacGia = cursor.getString(cursor.getColumnIndex("tenTacGia"));
-                    @SuppressLint("Range") int luotXem = cursor.getInt(cursor.getColumnIndex("luotXem"));
-                    @SuppressLint("Range") int luotTheoDoi = cursor.getInt(cursor.getColumnIndex("luotTheoDoi"));
-                    @SuppressLint("Range") String ngayPhatHanh = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
-                    @SuppressLint("Range") String moTaTruyen = cursor.getString(cursor.getColumnIndex("moTaTruyen"));
-                    @SuppressLint("Range") String urlAnhBia = cursor.getString(cursor.getColumnIndex("urlAnhBia"));
-
-                    truyen = new Truyen(idTruyen, tenTruyen, tenTacGia, luotXem, luotTheoDoi, ngayPhatHanh, moTaTruyen, urlAnhBia);
-                    isFirstRow = false;
-                }
-
-                // Lấy thông tin chương
-                @SuppressLint("Range") String idChapter = cursor.getString(cursor.getColumnIndex("idChapter"));
-                @SuppressLint("Range") int chuongSo = cursor.getInt(cursor.getColumnIndex("chuongSo"));
-                @SuppressLint("Range") String ngayPhatHanhChapter = cursor.getString(cursor.getColumnIndex("ngayPhatHanh"));
-
-                if (idChapter != null) {
-                    ChuongTruyen chuongTruyen = new ChuongTruyen(idChapter, idTruyen, chuongSo, ngayPhatHanhChapter);
-                    if (!chuongTruyenList.contains(chuongTruyen)) { // Kiểm tra trùng lặp
-                        chuongTruyenList.add(chuongTruyen);
-                    }
-                }
-            }
-            cursor.close();
-        }
-
-        // Lấy danh sách tag của truyện
-        Cursor tagCursor = dataBaseSQLLite.getTagForTruyen(db, idTruyen);
-        List<TruyenAddress> tagList = new ArrayList<>();
-        if (tagCursor != null) {
-            while (tagCursor.moveToNext()) {
-                @SuppressLint("Range") String tenTag = tagCursor.getString(tagCursor.getColumnIndex("tenTag"));
-                TruyenAddress truyenAddress = new TruyenAddress(idTruyen, tenTag);
-                if (!tagList.contains(truyenAddress)) { // Kiểm tra trùng lặp
-                    tagList.add(truyenAddress);
-                }
-            }
-            tagCursor.close();
-        }
-
-        // Lấy danh sách bình luận
-        Cursor commentCursor = dataBaseSQLLite.getCommentsWithUserNamesByTruyen(db, idTruyen);
-        List<Comment> commentList = new ArrayList<>();
-        if (commentCursor != null) {
-            while (commentCursor.moveToNext()) {
-                @SuppressLint("Range") String idComment = commentCursor.getString(commentCursor.getColumnIndex("idComment"));
-                @SuppressLint("Range") String idUser = commentCursor.getString(commentCursor.getColumnIndex("idUser"));
-                @SuppressLint("Range") String tenUser = commentCursor.getString(commentCursor.getColumnIndex("tenUser"));
-                @SuppressLint("Range") String noiDungBinhLuan = commentCursor.getString(commentCursor.getColumnIndex("noiDungBinhLuan"));
-                @SuppressLint("Range") String thoiGianBinhLuan = commentCursor.getString(commentCursor.getColumnIndex("thoiGianBinhLuan"));
-
-                Comment comment = new Comment(idComment, idTruyen, idUser, noiDungBinhLuan, thoiGianBinhLuan, tenUser);
-                commentList.add(comment);
-            }
-            commentCursor.close();
-        }
-
-        // Gán danh sách chương, tag và bình luận vào đối tượng `Truyen`
-        if (truyen != null) {
-            truyen.setDanhSachChuong(chuongTruyenList);
-            truyen.setTagList(tagList);
-            truyen.setCommentList(commentList);
-        }
-
-        db.close();
-        return truyen;
-    }
-
-
-
-
 
     private void sortTimeComics() {
         truyenList.sort((truyen1, truyen2) -> truyen2.getNgayPhatHanh().compareTo(truyen1.getNgayPhatHanh()));
         Log.d("SortTimeComics", "Danh sách đã được sắp xếp theo thời gian.");
     }
+
+    private void quickSortTimeComics(List<Truyen> list, int low, int high) {
+        if (low < high) {
+            int pi = partition(list, low, high);
+
+            quickSortTimeComics(list, low, pi - 1);
+            quickSortTimeComics(list, pi + 1, high);
+        }
+    }
+
+    private int partition(List<Truyen> list, int low, int high) {
+        Truyen pivot = list.get(high);
+        int i = (low - 1);
+
+        for (int j = low; j < high; j++) {
+            // So sánh ngày phát hành, xử lý trường hợp null
+            String dateJ = list.get(j).getNgayPhatHanh();
+            String datePivot = pivot.getNgayPhatHanh();
+
+            if ((dateJ != null && datePivot != null && dateJ.compareTo(datePivot) >= 0) ||
+                    (dateJ == null && datePivot != null) ||
+                    (dateJ == null && datePivot == null))
+            {
+                i++;
+
+                Truyen temp = list.get(i);
+                list.set(i, list.get(j));
+                list.set(j, temp);
+            }
+        }
+
+        Truyen temp = list.get(i + 1);
+        list.set(i + 1, list.get(high));
+        list.set(high, temp);
+
+        return i + 1;
+    }
+
+
 
     private void createListComics(int numItems) {
         pageDataList.clear();
@@ -305,35 +249,13 @@ public class MainActivity extends AppCompatActivity {
     private void returnDataListPage(){
         getAllruyen();
         //createSampleComicsData(400);
-        sortTimeComics();
+        List<Truyen> sortedTruyenList = new ArrayList<>(truyenList);
+        quickSortTimeComics(truyenList, 0, truyenList.size() - 1);
+        //sortTimeComics();
         createListComics(20);
     }
 
-    private void openThongTinTruyen(String idTruyen) {
-        // Lấy thông tin truyện
-        Truyen truyen = getThongTinTruyen(idTruyen); // Phương thức đã có
-
-        if (truyen != null) {
-            // Tạo Intent để mở `ThongTinTruyen`
-            Intent intent = new Intent(MainActivity.this, ThongTinTruyen.class);
-
-            // Truyền dữ liệu truyện qua Intent
-            intent.putExtra("truyen", (CharSequence) truyen);
-
-            // Truyền danh sách chương qua Intent
-            ArrayList<ChuongTruyen> danhSachChuong = new ArrayList<>(truyen.getDanhSachChuong());
-            intent.putExtra("danhSachChuong", danhSachChuong);
-
-            // Khởi chạy Activity
-            startActivity(intent);
-        } else {
-            Log.e("MainActivity", "Không tìm thấy thông tin truyện với ID: " + idTruyen);
-        }
-    }
-
     //endregion
-
-
 }
 
 
